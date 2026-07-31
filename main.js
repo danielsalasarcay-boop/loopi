@@ -450,6 +450,37 @@ function initJsonLd() {
 }
 
 /* ============================================================
+   Pantalla de carga — se oculta cuando la página termina de
+   cargar (evento load), con un mínimo visible para que no
+   parpadee en conexiones rápidas.
+   ============================================================ */
+function initPreloader() {
+  const el = document.querySelector('#preloader');
+  if (!el) return;
+  document.body.classList.add('no-scroll');
+
+  const MIN_VISIBLE_MS = 500;
+  const inicio = performance.now();
+
+  const ocultar = () => {
+    const restante = Math.max(0, MIN_VISIBLE_MS - (performance.now() - inicio));
+    setTimeout(() => {
+      el.classList.add('is-hidden');
+      document.body.classList.remove('no-scroll');
+      el.addEventListener('transitionend', () => el.remove(), { once: true });
+    }, restante);
+  };
+
+  if (document.readyState === 'complete') {
+    ocultar();
+  } else {
+    window.addEventListener('load', ocultar, { once: true });
+  }
+}
+
+initPreloader();
+
+/* ============================================================
    Init general
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {

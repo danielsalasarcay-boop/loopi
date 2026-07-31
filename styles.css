@@ -94,6 +94,47 @@ body.no-scroll { overflow: hidden; }
   left: 0;
 }
 
+/* ==========================================================================
+   Pantalla de carga
+   ========================================================================== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  background: var(--crema);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 500ms var(--ease), visibility 500ms var(--ease);
+}
+.preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.preloader__spiral {
+  width: 84px;
+  height: 84px;
+  animation: preloader-spin 1.6s linear infinite;
+}
+.preloader__wordmark {
+  width: 150px;
+  height: auto;
+}
+.preloader__wordmark-text { fill: var(--rojo); }
+
+@keyframes preloader-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preloader__spiral { animation: none; }
+  .preloader { transition: opacity 200ms linear; }
+}
+
 .container {
   max-width: var(--container-max);
   margin-inline: auto;
