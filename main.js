@@ -29,14 +29,6 @@ const CONFIG = {
     // PENDIENTE: métodos de pago aceptados.
     metodosPago: 'PENDIENTE — ej. Pago móvil, Zelle, Efectivo',
     email: 'Loopicaracas@gmail.com',
-    // PENDIENTE: pegar aquí el URL del iframe "src" de Google Maps si hay local físico. Dejar vacío si no aplica.
-    mapsEmbedUrl: '',
-  },
-
-  // PENDIENTE: precios en USD. $-- se muestra mientras estén en null.
-  precios: {
-    caja12: null,
-    caja24: null,
   },
 };
 
@@ -44,7 +36,7 @@ const CONFIG = {
    MENU — catálogo de sabores. Agregar un sabor nuevo es
    agregar una línea aquí; el HTML se genera solo.
    ============================================================ */
-const MENU_BASE = [
+const MENU = [
   {
     id: 'vegetales',
     nombre: 'Vegetales',
@@ -103,12 +95,6 @@ const MENU_BASE = [
   },
 ];
 
-const MENU = MENU_BASE.map((item) => ({
-  ...item,
-  precio12: CONFIG.precios.caja12,
-  precio24: CONFIG.precios.caja24,
-}));
-
 /* ============================================================
    Helpers
    ============================================================ */
@@ -139,10 +125,6 @@ function desbloquearScroll() {
   }
 }
 
-function formatPrecio(valor) {
-  return valor === null || valor === undefined ? '$--' : `$${valor}`;
-}
-
 function buildWhatsAppUrl(mensaje) {
   return `https://wa.me/${CONFIG.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
 }
@@ -155,12 +137,14 @@ function mensajeGenerico() {
   return `Hola loopi! 👋 Quiero hacer un pedido de mini lumpias.`;
 }
 
-function mensajePedido(tamano, items, total) {
+// Los precios los cotiza quien atiende WhatsApp — el mensaje solo lista
+// sabores y cantidades, nunca un monto.
+function mensajePedido(tamano, items) {
   const lineas = items
     .filter((i) => i.cantidad > 0)
     .map((i) => `• ${i.cantidad}x Cajita de ${tamano} — ${i.nombre}`)
     .join('\n');
-  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\nTotal estimado: ${formatPrecio(total)}\n\n¿Me confirman disponibilidad?`;
+  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\n¿Me confirman disponibilidad y precio?`;
 }
 
 /* ============================================================
@@ -238,7 +222,6 @@ function renderTarjetaMenu(item) {
       <div class="card__body">
         <h3 class="card__title">${item.nombre}</h3>
         <p class="card__desc">${item.descripcion}</p>
-        <p class="card__precio" data-precio>${formatPrecio(stateMenu.tamano === 12 ? item.precio12 : item.precio24)}</p>
         <a class="btn btn--whatsapp" data-wa-item target="_blank" rel="noopener" href="#" aria-label="Pedir ${item.nombre} por WhatsApp">
           ${ICONS.whatsapp}
           <span>Pedir por WhatsApp</span>
@@ -255,14 +238,12 @@ function renderMenu() {
   const postres = MENU.filter((m) => m.categoria === 'postre');
   gridSalados.innerHTML = salados.map(renderTarjetaMenu).join('');
   gridPostres.innerHTML = postres.map(renderTarjetaMenu).join('');
-  actualizarPreciosYLinks();
+  actualizarLinksMenu();
 }
 
-function actualizarPreciosYLinks() {
+function actualizarLinksMenu() {
   document.querySelectorAll('.card').forEach((card) => {
     const item = MENU.find((m) => m.id === card.dataset.id);
-    const precio = stateMenu.tamano === 12 ? item.precio12 : item.precio24;
-    card.querySelector('[data-precio]').textContent = formatPrecio(precio);
     card.querySelector('[data-wa-item]').setAttribute(
       'href',
       buildWhatsAppUrl(mensajeProducto(item.nombre, stateMenu.tamano))
@@ -280,7 +261,7 @@ function initToggleTamano() {
       stateMenu.tamano = Number(btn.dataset.tamano);
       botones.forEach((b) => b.classList.toggle('is-active', b === btn));
       botones.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      actualizarPreciosYLinks();
+      actualizarLinksMenu();
     });
   });
 }
@@ -320,11 +301,6 @@ const statePedido = {
   ),
 };
 
-function precioUnitario(item) {
-  const valor = statePedido.tamano === 12 ? item.precio12 : item.precio24;
-  return valor === null || valor === undefined ? 0 : valor;
-}
-
 function renderFilaPedido(item) {
   const cantidad = statePedido.cantidades[item.id];
   return `
@@ -332,7 +308,6 @@ function renderFilaPedido(item) {
       <img class="config-row__img" src="${item.img}" alt="" width="64" height="64" loading="lazy">
       <div class="config-row__info">
         <p class="config-row__nombre">${item.nombre}</p>
-        <p class="config-row__precio">${formatPrecio(statePedido.tamano === 12 ? item.precio12 : item.precio24)} c/u</p>
       </div>
       <div class="config-row__stepper">
         <button type="button" class="stepper__btn" data-accion="menos" data-id="${item.id}" aria-label="Quitar una cajita de ${item.nombre}">${ICONS.minus}</button>
@@ -351,24 +326,19 @@ function renderListasPedido() {
   actualizarPedidoUI();
 }
 
-// Actualiza total, unidades, botón de WhatsApp, contador del carrito y
-// estado visual del toggle de tamaño en TODOS los lugares de la página
-// que los usen (data-attributes, no IDs fijos → funciona en cualquier
-// combinación de secciones presentes).
+// Actualiza unidades, botón de WhatsApp, contador del carrito y estado
+// visual del toggle de tamaño en TODOS los lugares de la página que los
+// usen (data-attributes, no IDs fijos → funciona en cualquier combinación
+// de secciones presentes). Sin precios: eso lo cotiza quien atiende WhatsApp.
 function actualizarPedidoUI() {
-  let total = 0;
   let unidades = 0;
   MENU.forEach((item) => {
-    const cant = statePedido.cantidades[item.id];
-    total += cant * precioUnitario(item);
-    unidades += cant;
+    unidades += statePedido.cantidades[item.id];
   });
-  const totalMostrado = CONFIG.precios.caja12 === null ? null : total;
   const items = MENU.map((item) => ({ nombre: item.nombre, cantidad: statePedido.cantidades[item.id] }));
   const hayItems = unidades > 0;
-  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items, totalMostrado)) : '#';
+  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items)) : '#';
 
-  document.querySelectorAll('[data-pedido-total]').forEach((el) => { el.textContent = formatPrecio(totalMostrado); });
   document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
   document.querySelectorAll('[data-pedido-vacio]').forEach((el) => { el.hidden = hayItems; });
   document.querySelectorAll('[data-pedido-contenido]').forEach((el) => { el.hidden = !hayItems; });
@@ -572,8 +542,7 @@ function initContacto() {
   const elPago = document.querySelector('#dato-pago');
   const elWhatsapp = document.querySelector('#dato-whatsapp');
   const elEmail = document.querySelector('#dato-email');
-  const mapWrap = document.querySelector('#mapa-wrap');
-  if (!elDireccion || !elHorario || !elDelivery || !elPago || !elWhatsapp || !elEmail || !mapWrap) return;
+  if (!elDireccion || !elHorario || !elDelivery || !elPago || !elWhatsapp || !elEmail) return;
 
   elDireccion.textContent = CONFIG.contacto.direccion;
   elHorario.textContent = CONFIG.contacto.horario;
@@ -582,12 +551,6 @@ function initContacto() {
   elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
   elWhatsapp.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
   elEmail.textContent = CONFIG.contacto.email;
-
-  if (CONFIG.contacto.mapsEmbedUrl) {
-    mapWrap.innerHTML = `<iframe src="${CONFIG.contacto.mapsEmbedUrl}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación de loopi en el mapa" width="100%" height="100%" style="border:0"></iframe>`;
-  } else {
-    mapWrap.innerHTML = `<div class="mapa-pendiente"><p>Mapa pendiente — agrega la dirección y el link de Google Maps en <code>CONFIG.contacto</code>.</p></div>`;
-  }
 }
 
 /* ============================================================
@@ -668,7 +631,6 @@ function initJsonLd() {
     },
     telephone: `+${CONFIG.whatsapp.numero}`,
     openingHours: CONFIG.contacto.horario,
-    priceRange: '$$',
     url: window.location.href,
     sameAs: [CONFIG.instagram.url],
   };

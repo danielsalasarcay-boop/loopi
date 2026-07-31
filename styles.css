@@ -760,14 +760,7 @@ body.no-scroll {
   font-size: 1.15rem;
   color: var(--negro);
 }
-.card__desc { color: var(--texto-muted); font-size: 0.95rem; margin-bottom: 0.2rem; }
-.card__precio {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.6rem;
-  color: var(--rojo);
-  margin-bottom: 0.4rem;
-}
+.card__desc { color: var(--texto-muted); font-size: 0.95rem; margin-bottom: 0.4rem; }
 .card__badge {
   position: absolute;
   top: var(--space-sm);
@@ -819,7 +812,6 @@ body.no-scroll {
 .config-row__img { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
 .config-row__info { flex: 1; min-width: 120px; }
 .config-row__nombre { font-weight: 700; font-size: 0.98rem; }
-.config-row__precio { font-size: 0.85rem; color: var(--texto-muted); }
 .config-row__stepper {
   display: flex;
   align-items: center;
@@ -857,11 +849,10 @@ body.no-scroll {
 }
 .configurador__totales {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   font-size: 0.95rem;
 }
-.configurador__total strong { font-family: var(--font-heading); font-size: 1.3rem; color: var(--rojo); }
+.configurador__totales strong { font-family: var(--font-heading); font-size: 1.1rem; color: var(--rojo); }
 
 /* ==========================================================================
    Cómo pedir
@@ -1040,37 +1031,10 @@ body.no-scroll {
    Contacto
    ========================================================================== */
 .contacto { padding-block: var(--space-2xl); background: var(--crema); }
-.contacto__grid {
-  display: grid;
-  gap: var(--space-lg);
-}
-@media (min-width: 860px) {
-  .contacto__grid { grid-template-columns: 1fr 1fr; align-items: start; }
-}
+.contacto__info { max-width: 480px; margin-inline: auto; }
 .contacto__lista { display: grid; gap: var(--space-sm); }
 .contacto__lista dt { font-weight: 700; color: var(--rojo); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
 .contacto__lista dd { font-size: 1rem; }
-.contacto__mapa {
-  min-height: 320px;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  background: rgba(17, 17, 17, 0.05);
-}
-.mapa-pendiente {
-  height: 100%;
-  min-height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-md);
-  text-align: center;
-  color: var(--texto-muted);
-}
-.mapa-pendiente code {
-  background: rgba(17, 17, 17, 0.08);
-  padding: 0.1rem 0.4rem;
-  border-radius: 6px;
-}
 
 /* ==========================================================================
    Footer
