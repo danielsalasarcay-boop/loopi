@@ -390,6 +390,111 @@ body.no-scroll { overflow: hidden; }
 }
 
 /* ==========================================================================
+   Lumpia 3D — zoom a pantalla completa al hacer scroll.
+   El círculo (porthole) crece y pierde el border-radius mientras el fondo
+   de la misma imagen se revela detrás, en pantalla completa. Todo con
+   scroll + transform vía JS, sin GSAP ni Lenis (cero dependencias).
+   ========================================================================== */
+.lumpia3d {
+  position: relative;
+  height: 200vh;
+  background: var(--negro);
+}
+.lumpia3d__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--negro);
+}
+.lumpia3d__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.08);
+  will-change: opacity, transform;
+}
+.lumpia3d__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  will-change: opacity, transform;
+}
+.lumpia3d__kicker {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  color: var(--crema);
+}
+.lumpia3d__porthole {
+  width: clamp(220px, 34vw, 380px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  will-change: transform, border-radius;
+}
+.lumpia3d__porthole img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lumpia3d__reveal-text {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  width: min(90%, 560px);
+  text-align: center;
+  opacity: 0;
+  color: var(--crema);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+}
+.lumpia3d__reveal-text span {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  text-transform: none;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  opacity: 0.85;
+}
+@media (max-width: 860px) {
+  .lumpia3d { height: 170vh; }
+}
+@media (max-width: 480px) {
+  .lumpia3d { height: 150vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lumpia3d { height: auto; }
+  .lumpia3d__stage {
+    position: relative;
+    height: auto;
+    flex-direction: column;
+    padding-block: var(--space-2xl);
+    gap: var(--space-lg);
+  }
+  .lumpia3d__bg { position: absolute; inset: 0; opacity: 1; transform: none; }
+  .lumpia3d__porthole { width: min(90vw, 480px); border-radius: var(--radius-card); }
+  .lumpia3d__reveal-text { position: relative; left: auto; bottom: auto; transform: none; opacity: 1; margin-top: 0; }
+}
+
+/* ==========================================================================
    Barra de confianza
    ========================================================================== */
 .trust-bar {

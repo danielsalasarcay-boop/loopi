@@ -482,11 +482,65 @@ function initPreloader() {
 initPreloader();
 
 /* ============================================================
+   Lumpia 3D — el círculo crece y pierde el borde mientras el
+   fondo se revela, todo atado al progreso de scroll dentro de
+   la sección. Sin GSAP ni Lenis: solo transform vía rAF.
+   ============================================================ */
+function initLumpia3D() {
+  const section = document.querySelector('#lumpia3d');
+  if (!section || prefersReducedMotion()) return;
+
+  const bg = section.querySelector('.lumpia3d__bg');
+  const content = section.querySelector('.lumpia3d__content');
+  const porthole = section.querySelector('.lumpia3d__porthole');
+  const revealText = section.querySelector('.lumpia3d__reveal-text');
+
+  let ticking = false;
+
+  const actualizar = () => {
+    ticking = false;
+    const rect = section.getBoundingClientRect();
+    const distanciaTotal = section.offsetHeight - window.innerHeight;
+    if (distanciaTotal <= 0) return;
+
+    const progreso = Math.min(1, Math.max(0, -rect.top / distanciaTotal));
+
+    const salidaTexto = Math.min(1, progreso / 0.35);
+    const crecimiento = Math.min(1, progreso / 0.75);
+    const revelado = Math.min(1, Math.max(0, (progreso - 0.3) / 0.5));
+
+    content.style.opacity = String(1 - salidaTexto);
+    content.style.transform = `translateY(${salidaTexto * -30}px)`;
+
+    const escala = 1 + crecimiento * 7;
+    porthole.style.transform = `scale(${escala})`;
+    porthole.style.borderRadius = `${50 - crecimiento * 50}%`;
+
+    bg.style.opacity = String(revelado);
+    bg.style.transform = `scale(${1.08 - revelado * 0.08})`;
+
+    revealText.style.opacity = String(revelado);
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(actualizar);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  actualizar();
+}
+
+/* ============================================================
    Init general
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initBotonesGenericos();
+  initLumpia3D();
   renderMenu();
   initToggleTamano();
   initConfigurador();
