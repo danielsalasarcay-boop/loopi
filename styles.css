@@ -759,15 +759,24 @@ body.no-scroll { overflow: hidden; }
   box-shadow: var(--shadow-suave);
 }
 .floating-btn svg { width: 28px; height: 28px; }
-.floating-btn--whatsapp { background: var(--rojo); animation: pulse 2.4s ease-in-out infinite; }
-.floating-btn--instagram { background: var(--morado); }
+.floating-btn {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.floating-btn--whatsapp {
+  background: #25D366;
+  --pulse-color: 37, 211, 102;
+}
+.floating-btn--instagram {
+  background: radial-gradient(circle at 30% 30%, #E1306C 0%, #C13584 45%, #833AB4 100%);
+  --pulse-color: 193, 53, 132;
+}
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 22, 0, 0.45); }
-  50% { box-shadow: 0 0 0 12px rgba(231, 22, 0, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--pulse-color), 0.45); }
+  50% { box-shadow: 0 0 0 12px rgba(var(--pulse-color), 0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .floating-btn--whatsapp { animation: none; }
+  .floating-btn { animation: none; }
 }
 
 @media (max-width: 480px) {
