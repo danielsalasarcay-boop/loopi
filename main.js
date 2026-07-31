@@ -336,6 +336,88 @@ function initConfigurador() {
 }
 
 /* ============================================================
+   Ruleta de sabores — carrusel deslizable (scroll-snap nativo +
+   flechas). Cada tarjeta lleva directo al sabor en el menú.
+   ============================================================ */
+function initRuleta() {
+  const track = document.querySelector('#ruleta-track');
+  if (!track) return;
+
+  track.innerHTML = MENU.map(
+    (item) => `
+      <a href="#menu" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
+        <img src="${item.img}" alt="" width="160" height="160" loading="lazy">
+        <span>${item.nombre}</span>
+      </a>`
+  ).join('');
+
+  const prevBtn = document.querySelector('.ruleta__arrow--prev');
+  const nextBtn = document.querySelector('.ruleta__arrow--next');
+  if (!prevBtn || !nextBtn) return;
+
+  const desplazar = (direccion) => {
+    const card = track.querySelector('.ruleta__card');
+    if (!card) return;
+    const gap = parseFloat(getComputedStyle(track).columnGap || '0') || 0;
+    const delta = (card.getBoundingClientRect().width + gap) * direccion;
+    track.scrollBy({ left: delta, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  };
+
+  prevBtn.addEventListener('click', () => desplazar(-1));
+  nextBtn.addEventListener('click', () => desplazar(1));
+}
+
+/* ============================================================
+   Galería — lightbox accesible (teclado, foco, Escape)
+   ============================================================ */
+function initGaleria() {
+  const items = Array.from(document.querySelectorAll('.galeria__item'));
+  const lightbox = document.querySelector('#lightbox');
+  if (!items.length || !lightbox) return;
+
+  const imgEl = lightbox.querySelector('.lightbox__img');
+  let indiceActual = 0;
+  let elementoPrevio = null;
+
+  const mostrar = (i) => {
+    indiceActual = (i + items.length) % items.length;
+    const origen = items[indiceActual].querySelector('img');
+    imgEl.src = origen.src;
+    imgEl.alt = origen.alt;
+  };
+
+  const abrir = (i) => {
+    elementoPrevio = document.activeElement;
+    mostrar(i);
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+    lightbox.querySelector('.lightbox__close').focus();
+  };
+
+  const cerrar = () => {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('no-scroll');
+    if (elementoPrevio) elementoPrevio.focus();
+  };
+
+  items.forEach((item, i) => item.addEventListener('click', () => abrir(i)));
+  lightbox.querySelector('.lightbox__close').addEventListener('click', cerrar);
+  lightbox.querySelector('.lightbox__prev').addEventListener('click', () => mostrar(indiceActual - 1));
+  lightbox.querySelector('.lightbox__next').addEventListener('click', () => mostrar(indiceActual + 1));
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) cerrar();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') cerrar();
+    if (e.key === 'ArrowLeft') mostrar(indiceActual - 1);
+    if (e.key === 'ArrowRight') mostrar(indiceActual + 1);
+  });
+}
+
+/* ============================================================
    Instagram — bloque fijo (handle + link) e íconos flotantes
    ============================================================ */
 function initInstagram() {
@@ -541,9 +623,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initBotonesGenericos();
   initLumpia3D();
+  initRuleta();
   renderMenu();
   initToggleTamano();
   initConfigurador();
+  initGaleria();
   initInstagram();
   initContacto();
   initFooter();
