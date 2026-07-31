@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 110" role="img" aria-label="loopi">
+  <style>
+    .wordmark { font-family: 'Baloo 2', 'Poppins', 'Arial Rounded MT Bold', sans-serif; font-weight: 900; font-size: 84px; fill: #E71600; }
+    .dot-loop { fill: #FFA500; }
+  </style>
+  <text x="4" y="82" class="wordmark">loopi</text>
+  <circle class="dot-loop" cx="301" cy="30" r="9"/>
+  <circle class="dot-loop" cx="301" cy="30" r="3.5" fill="#E71600"/>
+</svg>
