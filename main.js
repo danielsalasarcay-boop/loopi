@@ -159,8 +159,13 @@ const ICONS = {
    ============================================================ */
 function initHeader() {
   const header = document.querySelector('.header');
+  if (!header) return;
+  // Páginas sin hero rojo debajo del header (ej. galeria.html) necesitan el
+  // header sólido desde el arranque; el texto crema del estado transparente
+  // se vuelve invisible sobre un fondo claro.
+  const forzarSolido = document.body.classList.contains('header--forzar-solido');
   const onScroll = () => {
-    header.classList.toggle('header--scrolled', window.scrollY > 40);
+    header.classList.toggle('header--scrolled', forzarSolido || window.scrollY > 40);
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -168,6 +173,7 @@ function initHeader() {
   const toggleBtn = document.querySelector('.header__hamburger');
   const mobileNav = document.querySelector('.mobile-nav');
   const closeBtn = document.querySelector('.mobile-nav__close');
+  if (!toggleBtn || !mobileNav || !closeBtn) return;
 
   const openMenu = () => {
     mobileNav.classList.add('is-open');
@@ -218,10 +224,13 @@ function renderTarjetaMenu(item) {
 }
 
 function renderMenu() {
+  const gridSalados = document.querySelector('#grid-salados');
+  const gridPostres = document.querySelector('#grid-postres');
+  if (!gridSalados || !gridPostres) return;
   const salados = MENU.filter((m) => m.categoria === 'salado');
   const postres = MENU.filter((m) => m.categoria === 'postre');
-  document.querySelector('#grid-salados').innerHTML = salados.map(renderTarjetaMenu).join('');
-  document.querySelector('#grid-postres').innerHTML = postres.map(renderTarjetaMenu).join('');
+  gridSalados.innerHTML = salados.map(renderTarjetaMenu).join('');
+  gridPostres.innerHTML = postres.map(renderTarjetaMenu).join('');
   actualizarPreciosYLinks();
 }
 
@@ -238,7 +247,10 @@ function actualizarPreciosYLinks() {
 }
 
 function initToggleTamano() {
-  const botones = document.querySelectorAll('.size-toggle__btn');
+  // :not([data-pedido-size-btn]) evita que este toggle (el del grid de
+  // precios) reaccione a clicks en el toggle de tamaño del carrito/pedido,
+  // que es un estado independiente manejado por initPedido().
+  const botones = document.querySelectorAll('.size-toggle__btn:not([data-pedido-size-btn])');
   botones.forEach((btn) => {
     btn.addEventListener('click', () => {
       stateMenu.tamano = Number(btn.dataset.tamano);
@@ -250,11 +262,38 @@ function initToggleTamano() {
 }
 
 /* ============================================================
-   Arma tu pedido — configurador en memoria (sin backend, sin localStorage)
+   Pedido / Carrito — estado compartido y persistente (localStorage),
+   igual al sistema de "Mi pedido" de Quality Bikes: botón flotante
+   con contador, panel deslizable, mismo pedido disponible en
+   cualquier página del sitio (index.html y galeria.html).
    ============================================================ */
+const PEDIDO_STORAGE_KEY = 'loopi-pedido-v1';
+
+function cargarPedidoGuardado() {
+  try {
+    const raw = window.localStorage.getItem(PEDIDO_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null; // localStorage bloqueado o dato corrupto: arrancamos vacío.
+  }
+}
+
+function guardarPedido() {
+  try {
+    window.localStorage.setItem(PEDIDO_STORAGE_KEY, JSON.stringify(statePedido));
+  } catch {
+    // Sin persistencia (modo privado, etc.): el pedido sigue vivo en memoria.
+  }
+}
+
+const pedidoGuardado = cargarPedidoGuardado();
 const statePedido = {
-  tamano: 12,
-  cantidades: Object.fromEntries(MENU.map((m) => [m.id, 0])),
+  tamano: pedidoGuardado && pedidoGuardado.tamano === 24 ? 24 : 12,
+  cantidades: Object.fromEntries(
+    MENU.map((m) => [m.id, Math.max(0, Number(pedidoGuardado && pedidoGuardado.cantidades && pedidoGuardado.cantidades[m.id]) || 0)])
+  ),
 };
 
 function precioUnitario(item) {
@@ -262,28 +301,37 @@ function precioUnitario(item) {
   return valor === null || valor === undefined ? 0 : valor;
 }
 
-function renderConfigurador() {
-  const cont = document.querySelector('#lista-configurador');
-  cont.innerHTML = MENU.map((item) => {
-    const cantidad = statePedido.cantidades[item.id];
-    return `
-      <div class="config-row" data-id="${item.id}">
-        <img class="config-row__img" src="${item.img}" alt="" width="64" height="64" loading="lazy">
-        <div class="config-row__info">
-          <p class="config-row__nombre">${item.nombre}</p>
-          <p class="config-row__precio">${formatPrecio(statePedido.tamano === 12 ? item.precio12 : item.precio24)} c/u</p>
-        </div>
-        <div class="config-row__stepper">
-          <button type="button" class="stepper__btn" data-accion="menos" aria-label="Quitar una cajita de ${item.nombre}">${ICONS.minus}</button>
-          <span class="stepper__cantidad" data-cantidad>${cantidad}</span>
-          <button type="button" class="stepper__btn" data-accion="mas" aria-label="Agregar una cajita de ${item.nombre}">${ICONS.plus}</button>
-        </div>
-      </div>`;
-  }).join('');
-  actualizarTotalPedido();
+function renderFilaPedido(item) {
+  const cantidad = statePedido.cantidades[item.id];
+  return `
+    <div class="config-row" data-id="${item.id}">
+      <img class="config-row__img" src="${item.img}" alt="" width="64" height="64" loading="lazy">
+      <div class="config-row__info">
+        <p class="config-row__nombre">${item.nombre}</p>
+        <p class="config-row__precio">${formatPrecio(statePedido.tamano === 12 ? item.precio12 : item.precio24)} c/u</p>
+      </div>
+      <div class="config-row__stepper">
+        <button type="button" class="stepper__btn" data-accion="menos" data-id="${item.id}" aria-label="Quitar una cajita de ${item.nombre}">${ICONS.minus}</button>
+        <span class="stepper__cantidad" data-cantidad>${cantidad}</span>
+        <button type="button" class="stepper__btn" data-accion="mas" data-id="${item.id}" aria-label="Agregar una cajita de ${item.nombre}">${ICONS.plus}</button>
+      </div>
+    </div>`;
 }
 
-function actualizarTotalPedido() {
+// Vuelve a pintar todas las listas de pedido presentes en la página
+// (la sección "Arma tu pedido" y/o el panel flotante) y refresca totales.
+function renderListasPedido() {
+  document.querySelectorAll('[data-pedido-lista]').forEach((cont) => {
+    cont.innerHTML = MENU.map(renderFilaPedido).join('');
+  });
+  actualizarPedidoUI();
+}
+
+// Actualiza total, unidades, botón de WhatsApp, contador del carrito y
+// estado visual del toggle de tamaño en TODOS los lugares de la página
+// que los usen (data-attributes, no IDs fijos → funciona en cualquier
+// combinación de secciones presentes).
+function actualizarPedidoUI() {
   let total = 0;
   let unidades = 0;
   MENU.forEach((item) => {
@@ -292,47 +340,106 @@ function actualizarTotalPedido() {
     unidades += cant;
   });
   const totalMostrado = CONFIG.precios.caja12 === null ? null : total;
-  document.querySelector('#config-total').textContent = formatPrecio(totalMostrado);
-  document.querySelector('#config-unidades').textContent = String(unidades);
-
-  const btnPedir = document.querySelector('#config-btn-whatsapp');
   const items = MENU.map((item) => ({ nombre: item.nombre, cantidad: statePedido.cantidades[item.id] }));
   const hayItems = unidades > 0;
-  btnPedir.classList.toggle('is-disabled', !hayItems);
-  btnPedir.setAttribute('aria-disabled', String(!hayItems));
-  btnPedir.setAttribute(
-    'href',
-    hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items, totalMostrado)) : '#'
-  );
+  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items, totalMostrado)) : '#';
+
+  document.querySelectorAll('[data-pedido-total]').forEach((el) => { el.textContent = formatPrecio(totalMostrado); });
+  document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
+  document.querySelectorAll('[data-pedido-vacio]').forEach((el) => { el.hidden = hayItems; });
+  document.querySelectorAll('[data-pedido-contenido]').forEach((el) => { el.hidden = !hayItems; });
+  document.querySelectorAll('[data-pedido-whatsapp]').forEach((btn) => {
+    btn.classList.toggle('is-disabled', !hayItems);
+    btn.setAttribute('aria-disabled', String(!hayItems));
+    btn.setAttribute('href', hrefWhatsapp);
+  });
+  document.querySelectorAll('[data-pedido-badge]').forEach((el) => {
+    el.textContent = String(unidades);
+    el.hidden = unidades === 0;
+  });
+  document.querySelectorAll('[data-pedido-size-btn]').forEach((btn) => {
+    const activo = Number(btn.dataset.tamano) === statePedido.tamano;
+    btn.classList.toggle('is-active', activo);
+    btn.setAttribute('aria-pressed', String(activo));
+  });
+
+  guardarPedido();
 }
 
-function initConfigurador() {
-  renderConfigurador();
+function initPedido() {
+  const haySecciones = document.querySelector('[data-pedido-lista]') || document.querySelector('[data-pedido-badge]');
+  if (!haySecciones) return;
 
-  document.querySelectorAll('.config-size-toggle .size-toggle__btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      statePedido.tamano = Number(btn.dataset.tamano);
-      document
-        .querySelectorAll('.config-size-toggle .size-toggle__btn')
-        .forEach((b) => b.classList.toggle('is-active', b === btn));
-      renderConfigurador();
+  renderListasPedido();
+
+  // Delegado en document: cubre steppers en la sección Y en el panel flotante.
+  document.addEventListener('click', (e) => {
+    const btnSize = e.target.closest('[data-pedido-size-btn]');
+    if (btnSize) {
+      statePedido.tamano = Number(btnSize.dataset.tamano);
+      renderListasPedido();
+      return;
+    }
+    const btnStep = e.target.closest('.stepper__btn');
+    if (btnStep) {
+      const id = btnStep.dataset.id;
+      const delta = btnStep.dataset.accion === 'mas' ? 1 : -1;
+      statePedido.cantidades[id] = Math.max(0, statePedido.cantidades[id] + delta);
+      document.querySelectorAll(`.config-row[data-id="${id}"] [data-cantidad]`).forEach((el) => {
+        el.textContent = String(statePedido.cantidades[id]);
+      });
+      actualizarPedidoUI();
+      return;
+    }
+    const btnWa = e.target.closest('[data-pedido-whatsapp]');
+    if (btnWa && btnWa.classList.contains('is-disabled')) {
+      e.preventDefault();
+    }
+  });
+}
+
+/* ============================================================
+   Carrito flotante — botón con contador + panel (mismo patrón
+   que el "Mi pedido" de Quality Bikes, esquina opuesta a los
+   botones de WhatsApp/Instagram).
+   ============================================================ */
+function initCarritoFlotante() {
+  const btn = document.querySelector('#carrito-btn');
+  const panel = document.querySelector('#carrito-panel');
+  const backdrop = document.querySelector('#carrito-backdrop');
+  const cerrar = document.querySelector('#carrito-cerrar');
+  const vaciar = document.querySelector('#carrito-vaciar');
+  if (!btn || !panel || !backdrop) return;
+
+  const abrirPanel = () => {
+    panel.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    btn.setAttribute('aria-expanded', 'true');
+    if (cerrar) cerrar.focus();
+  };
+  const cerrarPanel = () => {
+    panel.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.focus();
+  };
+
+  btn.addEventListener('click', () => {
+    panel.classList.contains('is-open') ? cerrarPanel() : abrirPanel();
+  });
+  if (cerrar) cerrar.addEventListener('click', cerrarPanel);
+  backdrop.addEventListener('click', cerrarPanel);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('is-open')) cerrarPanel();
+  });
+  if (vaciar) {
+    vaciar.addEventListener('click', () => {
+      MENU.forEach((item) => { statePedido.cantidades[item.id] = 0; });
+      renderListasPedido();
     });
-  });
-
-  document.querySelector('#lista-configurador').addEventListener('click', (e) => {
-    const btn = e.target.closest('.stepper__btn');
-    if (!btn) return;
-    const row = btn.closest('.config-row');
-    const id = row.dataset.id;
-    const delta = btn.dataset.accion === 'mas' ? 1 : -1;
-    statePedido.cantidades[id] = Math.max(0, statePedido.cantidades[id] + delta);
-    row.querySelector('[data-cantidad]').textContent = String(statePedido.cantidades[id]);
-    actualizarTotalPedido();
-  });
-
-  document.querySelector('#config-btn-whatsapp').addEventListener('click', (e) => {
-    if (e.currentTarget.classList.contains('is-disabled')) e.preventDefault();
-  });
+  }
 }
 
 /* ============================================================
@@ -433,15 +540,23 @@ function initInstagram() {
    Contacto — datos + mapa condicional
    ============================================================ */
 function initContacto() {
-  document.querySelector('#dato-direccion').textContent = CONFIG.contacto.direccion;
-  document.querySelector('#dato-horario').textContent = CONFIG.contacto.horario;
-  document.querySelector('#dato-delivery').textContent = CONFIG.contacto.zonaDelivery;
-  document.querySelector('#dato-pago').textContent = CONFIG.contacto.metodosPago;
-  document.querySelector('#dato-whatsapp').textContent = `+${CONFIG.whatsapp.numero}`;
-  document.querySelector('#dato-whatsapp').setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
-  document.querySelector('#dato-email').textContent = CONFIG.contacto.email;
-
+  const elDireccion = document.querySelector('#dato-direccion');
+  const elHorario = document.querySelector('#dato-horario');
+  const elDelivery = document.querySelector('#dato-delivery');
+  const elPago = document.querySelector('#dato-pago');
+  const elWhatsapp = document.querySelector('#dato-whatsapp');
+  const elEmail = document.querySelector('#dato-email');
   const mapWrap = document.querySelector('#mapa-wrap');
+  if (!elDireccion || !elHorario || !elDelivery || !elPago || !elWhatsapp || !elEmail || !mapWrap) return;
+
+  elDireccion.textContent = CONFIG.contacto.direccion;
+  elHorario.textContent = CONFIG.contacto.horario;
+  elDelivery.textContent = CONFIG.contacto.zonaDelivery;
+  elPago.textContent = CONFIG.contacto.metodosPago;
+  elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
+  elWhatsapp.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
+  elEmail.textContent = CONFIG.contacto.email;
+
   if (CONFIG.contacto.mapsEmbedUrl) {
     mapWrap.innerHTML = `<iframe src="${CONFIG.contacto.mapsEmbedUrl}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación de loopi en el mapa" width="100%" height="100%" style="border:0"></iframe>`;
   } else {
@@ -453,10 +568,15 @@ function initContacto() {
    Footer — año dinámico
    ============================================================ */
 function initFooter() {
-  document.querySelector('#footer-anio').textContent = String(new Date().getFullYear());
-  document.querySelector('#footer-telefono').textContent = `+${CONFIG.whatsapp.numero}`;
-  document.querySelector('#footer-telefono').setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
-  document.querySelector('#footer-email').textContent = CONFIG.contacto.email;
+  const elAnio = document.querySelector('#footer-anio');
+  const elTelefono = document.querySelector('#footer-telefono');
+  const elEmail = document.querySelector('#footer-email');
+  if (!elAnio || !elTelefono || !elEmail) return;
+
+  elAnio.textContent = String(new Date().getFullYear());
+  elTelefono.textContent = `+${CONFIG.whatsapp.numero}`;
+  elTelefono.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
+  elEmail.textContent = CONFIG.contacto.email;
 }
 
 /* ============================================================
@@ -471,7 +591,7 @@ function initScrollSuave() {
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      const offset = header.offsetHeight + 12;
+      const offset = (header ? header.offsetHeight : 0) + 12;
       const top = target.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     });
@@ -626,7 +746,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initRuleta();
   renderMenu();
   initToggleTamano();
-  initConfigurador();
+  initPedido();
+  initCarritoFlotante();
   initGaleria();
   initInstagram();
   initContacto();

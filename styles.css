@@ -834,6 +834,9 @@ body.no-scroll { overflow: hidden; }
    Galería + lightbox
    ========================================================================== */
 .galeria { padding-block: var(--space-2xl); background: var(--crema); text-align: center; }
+/* Página propia de galería: primer elemento bajo el header fijo, necesita
+   el mismo respiro que .hero le da al header transparente/sólido. */
+.galeria--pagina { padding-top: calc(var(--header-height) + var(--space-xl)); }
 .galeria .section-subtitle { margin-inline: auto; }
 .galeria__grid {
   display: grid;
@@ -1016,6 +1019,142 @@ body.no-scroll { overflow: hidden; }
 .footer__social a:hover { color: var(--naranja); }
 .footer__datos { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-size: 0.95rem; opacity: 0.85; }
 .footer__copy { font-size: 0.85rem; opacity: 0.6; }
+
+/* ==========================================================================
+   Carrito / pedido flotante — esquina inferior izquierda, opuesta a los
+   botones de WhatsApp/Instagram. Mismo patrón que un carrito de compras:
+   botón con contador, panel deslizable con backdrop.
+   ========================================================================== */
+.carrito-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  background: rgba(17, 17, 17, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-med), visibility var(--transition-med);
+}
+.carrito-backdrop.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+
+.carrito-btn {
+  position: fixed;
+  left: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 56px;
+  padding-inline: 1.2rem;
+  border-radius: var(--radius-pill);
+  background: var(--negro);
+  color: var(--crema);
+  box-shadow: var(--shadow-suave);
+  transition: transform var(--transition-fast);
+}
+.carrito-btn:hover { transform: translateY(-2px); }
+.carrito-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+.carrito-btn__label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.carrito-btn__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 0.3rem;
+  border-radius: 50%;
+  background: var(--rojo);
+  color: var(--crema);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.carrito-panel {
+  position: fixed;
+  left: var(--space-md);
+  bottom: calc(56px + var(--space-md) + 0.8rem);
+  z-index: 2500;
+  width: min(24rem, calc(100vw - 2.5rem));
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--crema);
+  border-radius: var(--radius-card);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity var(--transition-med), visibility var(--transition-med), transform var(--transition-med);
+  overflow: hidden;
+}
+.carrito-panel.is-open { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+
+.carrito-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+  flex-shrink: 0;
+}
+.carrito-panel__titulo { font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; font-size: 1rem; }
+.carrito-panel__cerrar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto-muted);
+  transition: color var(--transition-fast);
+}
+.carrito-panel__cerrar:hover { color: var(--rojo-oscuro); }
+.carrito-panel__cerrar svg { width: 20px; height: 20px; }
+
+.carrito-panel__vacio { padding: var(--space-lg) var(--space-md); text-align: center; color: var(--texto-muted); font-size: 0.9rem; }
+
+.carrito-panel__size-toggle { padding: var(--space-sm) var(--space-md) 0; display: flex; justify-content: center; }
+.carrito-panel__size-toggle .size-toggle { width: 100%; justify-content: center; }
+
+.carrito-panel__lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.carrito-panel__footer {
+  padding: var(--space-md);
+  border-top: 1px solid rgba(17, 17, 17, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+.carrito-panel__vaciar {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--texto-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding-block: 0.3rem;
+  transition: color var(--transition-fast);
+}
+.carrito-panel__vaciar:hover { color: var(--rojo-oscuro); }
+
+@media (max-width: 480px) {
+  .carrito-btn { left: var(--space-sm); bottom: var(--space-sm); height: 48px; padding-inline: 0.9rem; }
+  .carrito-btn__label { display: none; }
+  .carrito-panel { left: var(--space-sm); bottom: calc(48px + var(--space-sm) + 0.8rem); width: calc(100vw - 1.5rem); }
+}
 
 /* ==========================================================================
    Botones flotantes
