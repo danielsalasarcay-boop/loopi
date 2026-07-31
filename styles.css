@@ -205,7 +205,11 @@ body.no-scroll { overflow: hidden; }
 }
 .btn--whatsapp:hover { background: #000; }
 
-.btn--full { width: 100%; }
+.btn--full {
+  width: 100%;
+  white-space: normal;
+  text-align: center;
+}
 
 .btn.is-disabled {
   opacity: 0.45;
@@ -433,6 +437,9 @@ body.no-scroll { overflow: hidden; }
 
 .size-toggle {
   display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100%;
   background: rgba(17, 17, 17, 0.06);
   padding: 6px;
   border-radius: var(--radius-pill);
@@ -443,7 +450,11 @@ body.no-scroll { overflow: hidden; }
   border-radius: var(--radius-pill);
   font-weight: 700;
   color: var(--texto-oscuro);
+  white-space: nowrap;
   transition: background var(--transition-fast), color var(--transition-fast);
+}
+@media (max-width: 360px) {
+  .size-toggle__btn { padding: 0.65rem 1.1rem; font-size: 0.92rem; }
 }
 .size-toggle__btn.is-active {
   background: var(--rojo);
@@ -546,6 +557,7 @@ body.no-scroll { overflow: hidden; }
 }
 .config-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-sm);
   padding-bottom: var(--space-sm);
@@ -553,13 +565,21 @@ body.no-scroll { overflow: hidden; }
 }
 .config-row:last-child { border-bottom: none; padding-bottom: 0; }
 .config-row__img { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
-.config-row__info { flex: 1; min-width: 0; }
+.config-row__info { flex: 1; min-width: 120px; }
 .config-row__nombre { font-weight: 700; font-size: 0.98rem; }
 .config-row__precio { font-size: 0.85rem; color: var(--texto-muted); }
 .config-row__stepper {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.7rem;
+  margin-left: auto;
+}
+/* Pantallas muy angostas: el nombre del sabor necesita más ancho que el
+   disponible junto a la foto y el stepper, así que el stepper baja a su
+   propia línea en vez de comprimirse. */
+@media (max-width: 380px) {
+  .config-row__stepper { flex-basis: 100%; justify-content: flex-start; margin-left: 72px; }
 }
 .stepper__btn {
   width: 34px;
@@ -600,7 +620,7 @@ body.no-scroll { overflow: hidden; }
   gap: var(--space-lg);
   margin-top: var(--space-lg);
 }
-@media (min-width: 780px) {
+@media (min-width: 700px) {
   .pasos { grid-template-columns: repeat(3, 1fr); }
 }
 .paso { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }

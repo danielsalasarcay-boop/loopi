@@ -291,7 +291,8 @@ function actualizarTotalPedido() {
     total += cant * precioUnitario(item);
     unidades += cant;
   });
-  document.querySelector('#config-total').textContent = formatPrecio(CONFIG.precios.caja12 === null ? null : total);
+  const totalMostrado = CONFIG.precios.caja12 === null ? null : total;
+  document.querySelector('#config-total').textContent = formatPrecio(totalMostrado);
   document.querySelector('#config-unidades').textContent = String(unidades);
 
   const btnPedir = document.querySelector('#config-btn-whatsapp');
@@ -301,7 +302,7 @@ function actualizarTotalPedido() {
   btnPedir.setAttribute('aria-disabled', String(!hayItems));
   btnPedir.setAttribute(
     'href',
-    hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items, total)) : '#'
+    hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items, totalMostrado)) : '#'
   );
 }
 
