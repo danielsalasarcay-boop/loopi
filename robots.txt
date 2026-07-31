@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://TU-USUARIO.github.io/loopi/sitemap.xml
+Sitemap: https://danielsalasarcay-boop.github.io/loopi/sitemap.xml
