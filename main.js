@@ -11,9 +11,8 @@ const CONFIG = {
     ciudad: 'Caracas, Venezuela',
   },
 
-  // PENDIENTE: reemplazar por el número real, formato 58 + código de área + número, sin "+", sin espacios.
   whatsapp: {
-    numero: '58XXXXXXXXXX',
+    numero: '584223332505',
   },
 
   instagram: {
@@ -684,6 +683,94 @@ function initPreloader() {
 initPreloader();
 
 /* ============================================================
+   Hero — cambio de paleta al hacer scroll (solo el fondo de la
+   portada): arranca en rojo, el morado se funde al llegar a la
+   mitad del recorrido del hero, y hacia el final entra el naranja
+   como color principal junto al rojo. Progreso 0–1 relativo a la
+   altura del propio hero, sin pines ni librerías.
+   ============================================================ */
+function initHeroColorShift() {
+  const hero = document.querySelector('#hero');
+  if (!hero || prefersReducedMotion()) return;
+
+  const capaMorado = hero.querySelector('.hero__capa--morado');
+  const capaNaranja = hero.querySelector('.hero__capa--naranja');
+  if (!capaMorado || !capaNaranja) return;
+
+  let ticking = false;
+
+  const actualizar = () => {
+    ticking = false;
+    const rect = hero.getBoundingClientRect();
+    const alto = hero.offsetHeight || 1;
+    const progreso = Math.min(1, Math.max(0, -rect.top / alto));
+
+    // El morado sube y baja, con pico a mitad de camino.
+    const morado = Math.max(0, 1 - Math.abs(progreso - 0.5) * 2);
+    // El naranja sube recién en el último tramo, como tinte cálido — tope bajo
+    // a propósito: a más opacidad el texto blanco pierde contraste sobre el
+    // naranja claro (verificado: 0.35 se queda en ~3.75:1, seguro).
+    const naranja = Math.min(0.35, Math.max(0, (progreso - 0.55) / 0.45) * 0.35);
+
+    capaMorado.style.opacity = String(morado);
+    capaNaranja.style.opacity = String(naranja);
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(actualizar);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  actualizar();
+}
+
+/* ============================================================
+   Lluvia de lumpias — a los 5 segundos de cargar la página,
+   una tanda de mini lumpias cae dentro del hero. Puramente
+   decorativo (aria-hidden), respeta prefers-reduced-motion.
+   ============================================================ */
+function initLluviaLumpias() {
+  const contenedor = document.querySelector('#hero-lluvia');
+  if (!contenedor || prefersReducedMotion()) return;
+
+  const SPRITE = './img/hero/lumpia-sprite-01.png';
+  const CANTIDAD = 22;
+  const VENTANA_MS = 4000;
+
+  const crearLumpia = () => {
+    const img = document.createElement('img');
+    img.src = SPRITE;
+    img.alt = '';
+    img.className = 'hero__lumpia-cayendo';
+
+    const tamano = 26 + Math.random() * 32;
+    const izquierda = Math.random() * 96;
+    const duracion = 2.6 + Math.random() * 2.2;
+    const rotInicial = Math.random() * 360;
+    const rotFinal = rotInicial + (Math.random() > 0.5 ? 1 : -1) * (180 + Math.random() * 360);
+
+    img.style.width = `${tamano}px`;
+    img.style.left = `${izquierda}%`;
+    img.style.setProperty('--rot-inicial', `${rotInicial}deg`);
+    img.style.setProperty('--rot-final', `${rotFinal}deg`);
+    img.style.animationDuration = `${duracion}s`;
+
+    contenedor.appendChild(img);
+    img.addEventListener('animationend', () => img.remove());
+  };
+
+  setTimeout(() => {
+    for (let i = 0; i < CANTIDAD; i++) {
+      setTimeout(crearLumpia, Math.random() * VENTANA_MS);
+    }
+  }, 5000);
+}
+
+/* ============================================================
    Lumpia 3D — el círculo crece y pierde el borde mientras el
    fondo se revela, todo atado al progreso de scroll dentro de
    la sección. Sin GSAP ni Lenis: solo transform vía rAF.
@@ -742,6 +829,8 @@ function initLumpia3D() {
 document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initBotonesGenericos();
+  initHeroColorShift();
+  initLluviaLumpias();
   initLumpia3D();
   initRuleta();
   renderMenu();
