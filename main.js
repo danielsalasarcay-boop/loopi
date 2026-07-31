@@ -23,14 +23,12 @@ const CONFIG = {
   contacto: {
     // PENDIENTE: dirección exacta del local o punto de despacho.
     direccion: 'PENDIENTE — dirección del local / punto de despacho en Caracas',
-    // PENDIENTE: horario real de atención.
-    horario: 'PENDIENTE — ej. Lun a Sáb, 9:00am a 6:00pm',
+    horario: 'Lunes a domingo, 9:00am a 6:00pm',
     // PENDIENTE: zonas de Caracas donde se hace delivery.
     zonaDelivery: 'PENDIENTE — ej. Caracas (Este, Centro, Los Palos Grandes...)',
     // PENDIENTE: métodos de pago aceptados.
     metodosPago: 'PENDIENTE — ej. Pago móvil, Zelle, Efectivo',
-    // PENDIENTE: correo de contacto (opcional).
-    email: 'PENDIENTE — correo de contacto',
+    email: 'Loopicaracas@gmail.com',
     // PENDIENTE: pegar aquí el URL del iframe "src" de Google Maps si hay local físico. Dejar vacío si no aplica.
     mapsEmbedUrl: '',
   },
@@ -114,6 +112,33 @@ const MENU = MENU_BASE.map((item) => ({
 /* ============================================================
    Helpers
    ============================================================ */
+
+// Bloqueo de scroll de fondo con overlays (menú móvil, carrito, lightbox,
+// preloader). overflow:hidden en <body> NO alcanza en iOS Safari — el fondo
+// igual rebota/scrollea detrás del overlay. Fijar el body en su posición
+// actual (position:fixed + top negativo) lo evita del todo. Contador en vez
+// de booleano por si dos overlays llegan a superponerse.
+let bloqueosScroll = 0;
+let scrollGuardadoY = 0;
+
+function bloquearScroll() {
+  if (bloqueosScroll === 0) {
+    scrollGuardadoY = window.scrollY;
+    document.body.classList.add('no-scroll');
+    document.body.style.top = `-${scrollGuardadoY}px`;
+  }
+  bloqueosScroll++;
+}
+
+function desbloquearScroll() {
+  bloqueosScroll = Math.max(0, bloqueosScroll - 1);
+  if (bloqueosScroll === 0) {
+    document.body.classList.remove('no-scroll');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollGuardadoY);
+  }
+}
+
 function formatPrecio(valor) {
   return valor === null || valor === undefined ? '$--' : `$${valor}`;
 }
@@ -177,12 +202,12 @@ function initHeader() {
   const openMenu = () => {
     mobileNav.classList.add('is-open');
     toggleBtn.setAttribute('aria-expanded', 'true');
-    document.body.classList.add('no-scroll');
+    bloquearScroll();
   };
   const closeMenu = () => {
     mobileNav.classList.remove('is-open');
     toggleBtn.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('no-scroll');
+    desbloquearScroll();
   };
 
   toggleBtn.addEventListener('click', openMenu);
@@ -415,6 +440,7 @@ function initCarritoFlotante() {
     backdrop.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
     btn.setAttribute('aria-expanded', 'true');
+    bloquearScroll();
     if (cerrar) cerrar.focus();
   };
   const cerrarPanel = () => {
@@ -422,6 +448,7 @@ function initCarritoFlotante() {
     backdrop.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     btn.setAttribute('aria-expanded', 'false');
+    desbloquearScroll();
     btn.focus();
   };
 
@@ -497,14 +524,14 @@ function initGaleria() {
     mostrar(i);
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('no-scroll');
+    bloquearScroll();
     lightbox.querySelector('.lightbox__close').focus();
   };
 
   const cerrar = () => {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('no-scroll');
+    desbloquearScroll();
     if (elementoPrevio) elementoPrevio.focus();
   };
 
@@ -659,7 +686,7 @@ function initJsonLd() {
 function initPreloader() {
   const el = document.querySelector('#preloader');
   if (!el) return;
-  document.body.classList.add('no-scroll');
+  bloquearScroll();
 
   const MIN_VISIBLE_MS = 500;
   const inicio = performance.now();
@@ -668,7 +695,7 @@ function initPreloader() {
     const restante = Math.max(0, MIN_VISIBLE_MS - (performance.now() - inicio));
     setTimeout(() => {
       el.classList.add('is-hidden');
-      document.body.classList.remove('no-scroll');
+      desbloquearScroll();
       el.addEventListener('transitionend', () => el.remove(), { once: true });
     }, restante);
   };

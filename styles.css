@@ -72,7 +72,17 @@ h1, h2, h3, h4, p, dl, dd { margin: 0; }
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
 input, select { font: inherit; }
 
-body.no-scroll { overflow: hidden; }
+/* position:fixed (no solo overflow:hidden) porque en iOS Safari el body
+   sigue rebotando/scrolleando detrás de un overlay solo con overflow:hidden.
+   El "top" negativo lo pone JS (bloquearScroll en main.js) para mantener la
+   posición visual exacta donde estaba el scroll al bloquear. */
+body.no-scroll {
+  overflow: hidden;
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
 
 :focus-visible {
   outline: 3px solid var(--morado);
@@ -333,7 +343,7 @@ body.no-scroll { overflow: hidden; }
    ========================================================================== */
 .hero {
   position: relative;
-  min-height: 82vh;
+  min-height: 82svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -467,7 +477,7 @@ body.no-scroll { overflow: hidden; }
 .lumpia3d__stage {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   display: flex;
   align-items: center;
