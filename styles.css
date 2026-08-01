@@ -1049,37 +1049,24 @@ body.no-scroll {
    Footer
    ========================================================================== */
 .footer {
-  position: relative;
+  background: var(--negro);
   color: var(--crema);
-  overflow: hidden;
-  min-height: 320px;
-  display: flex;
-  align-items: flex-end;
   padding-block: var(--space-xl);
 }
-.footer__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  /* Centrado en el sujeto (wordmark + cartera), no en la franja oscura
-     vacía de arriba de la foto — con cover en una franja ancha y baja
-     como el footer, lo que quede fuera del punto de referencia se
-     recorta primero. */
-  background-position: center 55%;
+/* La foto se enmarca a un ancho fijo en vez de ir a sangre completa:
+   a 1225px de resolución nativa, estirarla por todo el ancho de un
+   footer de escritorio (1440-1920px+, el doble en pantallas Retina)
+   obliga al navegador a agrandarla mucho más allá de su tamaño real
+   y se ve borrosa. Contenida a 640px como máximo, casi nunca hace
+   falta agrandarla — se ve nítida en cualquier pantalla. */
+.footer__foto {
+  width: min(100%, 640px);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
-@media (min-width: 900px) {
-  .footer { min-height: 380px; }
-}
-.footer__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(17, 17, 17, 0.25) 0%, rgba(17, 17, 17, 0.88) 78%);
-}
+.footer__foto img { width: 100%; height: auto; display: block; }
 .footer__inner {
-  position: relative;
-  z-index: 2;
   width: 100%;
   display: flex;
   flex-direction: column;
