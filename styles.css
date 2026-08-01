@@ -1052,7 +1052,7 @@ body.no-scroll {
   position: relative;
   color: var(--crema);
   overflow: hidden;
-  min-height: 420px;
+  min-height: 320px;
   display: flex;
   align-items: flex-end;
   padding-block: var(--space-xl);
@@ -1062,7 +1062,14 @@ body.no-scroll {
   inset: 0;
   z-index: 0;
   background-size: cover;
-  background-position: center 35%;
+  /* Centrado en el sujeto (wordmark + cartera), no en la franja oscura
+     vacía de arriba de la foto — con cover en una franja ancha y baja
+     como el footer, lo que quede fuera del punto de referencia se
+     recorta primero. */
+  background-position: center 55%;
+}
+@media (min-width: 900px) {
+  .footer { min-height: 380px; }
 }
 .footer__overlay {
   position: absolute;
