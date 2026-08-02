@@ -233,7 +233,10 @@ body.no-scroll {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 900;
-  height: var(--header-height);
+  height: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   display: flex;
   align-items: center;
   background: transparent;
@@ -349,8 +352,8 @@ body.no-scroll {
   justify-content: center;
   color: var(--crema);
   overflow: hidden;
-  padding-top: var(--header-height);
-  padding-block: var(--space-xl) var(--space-2xl);
+  padding-top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  padding-bottom: var(--space-2xl);
   text-align: center;
 }
 
@@ -471,7 +474,7 @@ body.no-scroll {
    ========================================================================== */
 .lumpia3d {
   position: relative;
-  height: 200vh;
+  height: 200svh;
   background: var(--negro);
 }
 .lumpia3d__stage {
@@ -549,10 +552,10 @@ body.no-scroll {
   opacity: 0.85;
 }
 @media (max-width: 860px) {
-  .lumpia3d { height: 170vh; }
+  .lumpia3d { height: 170svh; }
 }
 @media (max-width: 480px) {
-  .lumpia3d { height: 150vh; }
+  .lumpia3d { height: 150svh; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lumpia3d { height: auto; }
@@ -910,7 +913,7 @@ body.no-scroll {
 .galeria { padding-block: var(--space-2xl); background: var(--crema); text-align: center; }
 /* Página propia de galería: primer elemento bajo el header fijo, necesita
    el mismo respiro que .hero le da al header transparente/sólido. */
-.galeria--pagina { padding-top: calc(var(--header-height) + var(--space-xl)); }
+.galeria--pagina { padding-top: calc(var(--header-height) + var(--space-xl) + env(safe-area-inset-top, 0px)); }
 .galeria .section-subtitle { margin-inline: auto; }
 .galeria__grid {
   display: grid;
@@ -1051,7 +1054,15 @@ body.no-scroll {
 .footer {
   background: var(--negro);
   color: var(--crema);
-  padding-block: var(--space-xl);
+  padding-top: var(--space-xl);
+  /* El carrito flotante (bottom-left) y los botones de WhatsApp/Instagram
+     (bottom-right) son position:fixed y quedan siempre encima del contenido
+     que se scrollea debajo — con solo --space-xl de padding, el botón del
+     carrito (56px + su offset de --space-md) tapaba parte del copyright al
+     llegar al final de la página. Padding extra para que el pie de página
+     nunca quede debajo de esos botones, más el safe-area-inset del home
+     indicator en iPhones con notch. */
+  padding-bottom: calc(var(--space-xl) + 64px + env(safe-area-inset-bottom, 0px));
 }
 /* La foto se enmarca a un ancho fijo en vez de ir a sangre completa:
    a 1225px de resolución nativa, estirarla por todo el ancho de un
@@ -1102,8 +1113,8 @@ body.no-scroll {
 
 .carrito-btn {
   position: fixed;
-  left: var(--space-md);
-  bottom: var(--space-md);
+  left: calc(var(--space-md) + env(safe-area-inset-left, 0px));
+  bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
   z-index: 900;
   display: flex;
   align-items: center;
@@ -1140,8 +1151,8 @@ body.no-scroll {
 
 .carrito-panel {
   position: fixed;
-  left: var(--space-md);
-  bottom: calc(56px + var(--space-md) + 0.8rem);
+  left: calc(var(--space-md) + env(safe-area-inset-left, 0px));
+  bottom: calc(56px + var(--space-md) + 0.8rem + env(safe-area-inset-bottom, 0px));
   z-index: 2500;
   width: min(24rem, calc(100vw - 2.5rem));
   max-height: 70vh;
@@ -1182,7 +1193,20 @@ body.no-scroll {
 
 .carrito-panel__vacio { padding: var(--space-lg) var(--space-md); text-align: center; color: var(--texto-muted); font-size: 0.9rem; }
 
-.carrito-panel__size-toggle { padding: var(--space-sm) var(--space-md) 0; display: flex; justify-content: center; }
+/* [data-pedido-contenido] envuelve toggle+lista+footer dentro del panel, entre
+   .carrito-panel (flex column) y .carrito-panel__lista (flex:1). Sin display:flex
+   acá, ese wrapper corta la cadena flex y .carrito-panel__lista nunca se achica
+   para caber en max-height: crece a su alto natural y empuja el footer (botón
+   de WhatsApp) fuera del panel, invisible e inalcanzable. :not([hidden]) evita
+   pisarle el display:none al atributo hidden que usa main.js. */
+.carrito-panel [data-pedido-contenido]:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.carrito-panel__size-toggle { padding: var(--space-sm) var(--space-md) 0; display: flex; justify-content: center; flex-shrink: 0; }
 .carrito-panel__size-toggle .size-toggle { width: 100%; justify-content: center; }
 
 .carrito-panel__lista {
@@ -1214,9 +1238,9 @@ body.no-scroll {
 .carrito-panel__vaciar:hover { color: var(--rojo-oscuro); }
 
 @media (max-width: 480px) {
-  .carrito-btn { left: var(--space-sm); bottom: var(--space-sm); height: 48px; padding-inline: 0.9rem; }
+  .carrito-btn { left: calc(var(--space-sm) + env(safe-area-inset-left, 0px)); bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px)); height: 48px; padding-inline: 0.9rem; }
   .carrito-btn__label { display: none; }
-  .carrito-panel { left: var(--space-sm); bottom: calc(48px + var(--space-sm) + 0.8rem); width: calc(100vw - 1.5rem); }
+  .carrito-panel { left: calc(var(--space-sm) + env(safe-area-inset-left, 0px)); bottom: calc(48px + var(--space-sm) + 0.8rem + env(safe-area-inset-bottom, 0px)); width: calc(100vw - 1.5rem); }
 }
 
 /* ==========================================================================
@@ -1224,8 +1248,8 @@ body.no-scroll {
    ========================================================================== */
 .floating-buttons {
   position: fixed;
-  right: var(--space-md);
-  bottom: var(--space-md);
+  right: calc(var(--space-md) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
   z-index: 800;
   display: flex;
   flex-direction: column;
@@ -1263,7 +1287,7 @@ body.no-scroll {
 }
 
 @media (max-width: 480px) {
-  .floating-buttons { right: var(--space-sm); bottom: var(--space-sm); }
+  .floating-buttons { right: calc(var(--space-sm) + env(safe-area-inset-right, 0px)); bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px)); }
   .floating-btn { width: 48px; height: 48px; }
   .floating-btn svg { width: 24px; height: 24px; }
 }

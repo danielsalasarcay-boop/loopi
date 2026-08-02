@@ -185,18 +185,25 @@ function initHeader() {
 
   const openMenu = () => {
     mobileNav.classList.add('is-open');
+    mobileNav.setAttribute('aria-hidden', 'false');
     toggleBtn.setAttribute('aria-expanded', 'true');
     bloquearScroll();
+    closeBtn.focus();
   };
   const closeMenu = () => {
     mobileNav.classList.remove('is-open');
+    mobileNav.setAttribute('aria-hidden', 'true');
     toggleBtn.setAttribute('aria-expanded', 'false');
     desbloquearScroll();
+    toggleBtn.focus();
   };
 
   toggleBtn.addEventListener('click', openMenu);
   closeBtn.addEventListener('click', closeMenu);
   mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMenu();
+  });
 }
 
 /* ============================================================
@@ -600,6 +607,12 @@ function initRevealOnScroll() {
     targets.forEach((el) => el.classList.add('is-visible'));
     return;
   }
+  // threshold:0 (en vez de un % del alto del elemento) porque algunos
+  // data-reveal son contenedores muy altos en mobile (ej. .menu__grid con
+  // varias tarjetas apiladas en una sola columna, cientos de px más alto
+  // que el viewport): con un threshold >0 nunca se llega a tener ese % del
+  // elemento visible a la vez y el reveal no se dispara jamás, dejando la
+  // sección permanentemente invisible (opacity:0).
   const obs = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -609,7 +622,7 @@ function initRevealOnScroll() {
         }
       });
     },
-    { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    { threshold: 0, rootMargin: '0px 0px -40px 0px' }
   );
   targets.forEach((el) => obs.observe(el));
 }
