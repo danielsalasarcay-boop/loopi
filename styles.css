@@ -1052,32 +1052,45 @@ body.no-scroll {
    Footer
    ========================================================================== */
 .footer {
+  position: relative;
+  overflow: hidden;
   background: var(--negro);
   color: var(--crema);
-  padding-top: var(--space-xl);
+  padding-top: var(--space-lg);
   /* El carrito flotante (bottom-left) y los botones de WhatsApp/Instagram
      (bottom-right) son position:fixed y quedan siempre encima del contenido
-     que se scrollea debajo — con solo --space-xl de padding, el botón del
-     carrito (56px + su offset de --space-md) tapaba parte del copyright al
-     llegar al final de la página. Padding extra para que el pie de página
-     nunca quede debajo de esos botones, más el safe-area-inset del home
-     indicator en iPhones con notch. */
-  padding-bottom: calc(var(--space-xl) + 64px + env(safe-area-inset-bottom, 0px));
+     que se scrollea debajo — sin este colchón, el botón del carrito (56px +
+     su offset de --space-md) tapaba parte del copyright al llegar al final
+     de la página. Padding extra para que el pie de página nunca quede
+     debajo de esos botones, más el safe-area-inset del home indicator en
+     iPhones con notch. */
+  padding-bottom: calc(var(--space-lg) + 64px + env(safe-area-inset-bottom, 0px));
 }
-/* La foto se enmarca a un ancho fijo en vez de ir a sangre completa:
-   a 1225px de resolución nativa, estirarla por todo el ancho de un
-   footer de escritorio (1440-1920px+, el doble en pantallas Retina)
-   obliga al navegador a agrandarla mucho más allá de su tamaño real
-   y se ve borrosa. Contenida a 640px como máximo, casi nunca hace
-   falta agrandarla — se ve nítida en cualquier pantalla. */
-.footer__foto {
-  width: min(100%, 640px);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+/* Foto de fondo a sangre completa (antes era un recuadro de 640px arriba
+   del texto, ocupando mucho alto). object-fit:cover + object-position:center
+   deja el bolso/logo visibles en cualquier proporción de pantalla: la imagen
+   se generó panorámica (21:9) con espacio negro de sobra a los lados para
+   que el recorte nunca corte al sujeto. */
+.footer__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
-.footer__foto img { width: 100%; height: auto; display: block; }
+/* Scrim oscuro parejo sobre la foto para que el texto crema mantenga
+   contraste AA sin importar si cae sobre el bolso (más claro) o el fondo. */
+.footer__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(17, 17, 17, 0.6);
+}
 .footer__inner {
+  position: relative;
+  z-index: 2;
   width: 100%;
   display: flex;
   flex-direction: column;
