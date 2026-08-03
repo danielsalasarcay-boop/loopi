@@ -793,6 +793,8 @@ function initLumpia3D() {
   const content = section.querySelector('.lumpia3d__content');
   const porthole = section.querySelector('.lumpia3d__porthole');
   const revealText = section.querySelector('.lumpia3d__reveal-text');
+  const humo = initHumoLumpia3D();
+  let humoActivo = false;
 
   let ticking = false;
 
@@ -819,6 +821,23 @@ function initLumpia3D() {
     bg.style.transform = `scale(${1.08 - revelado * 0.08})`;
 
     revealText.style.opacity = String(revelado);
+
+    // El humo recién tiene sentido una vez que la foto de la lumpia se
+    // reveló — antes de eso solo se ve "Mira de cerca" sin comida en
+    // pantalla, así que no debe aparecer. enPantalla evita que se quede
+    // encendido para siempre una vez que la sección ya quedó tapada atrás
+    // (revelado se queda en 1 aunque hayas seguido bajando).
+    if (humo) {
+      const enPantalla = rect.bottom > 0 && rect.top < window.innerHeight;
+      const mostrarHumo = enPantalla && revelado > 0.4;
+      if (mostrarHumo && !humoActivo) {
+        humo.iniciar();
+        humoActivo = true;
+      } else if (!mostrarHumo && humoActivo) {
+        humo.detener();
+        humoActivo = false;
+      }
+    }
   };
 
   const onScroll = () => {
@@ -834,22 +853,24 @@ function initLumpia3D() {
 }
 
 /* ============================================================
-   Humo de las lumpias — vapor flotando dentro de #lumpia3d
-   mientras la sección está en pantalla. Cada partícula es una
-   imagen de humo con transparencia real (ver comentario de
-   .lumpia3d__vapor en styles.css) que sube, se curva de lado a
-   lado, gira suave y se desvanece — mismo patrón que
-   initLluviaLumpias, pero en loop continuo, con dos o tres
-   partículas superpuestas para que se vea denso, y con
-   IntersectionObserver para no animar nada fuera de pantalla.
+   Humo de las lumpias — vapor flotando dentro de #lumpia3d.
+   Cada partícula es una imagen de humo con transparencia real
+   (ver comentario de .lumpia3d__vapor en styles.css) que sube, se
+   curva de lado a lado, gira suave y se desvanece — mismo patrón
+   que initLluviaLumpias, pero en loop continuo mientras dure.
+   No decide sola cuándo prender/apagar: devuelve {iniciar,
+   detener} y es initLumpia3D quien los llama, atado al progreso
+   real de scroll (recién cuando la foto se reveló, no antes ni
+   una vez que la sección ya quedó tapada).
    ============================================================ */
 function initHumoLumpia3D() {
   const contenedor = document.querySelector('#lumpia3d-humo');
-  const section = document.querySelector('#lumpia3d');
-  if (!contenedor || !section || prefersReducedMotion()) return;
+  if (!contenedor || prefersReducedMotion()) return null;
 
   const SPRITES = ['./img/3d/vapor-humo-01.webp', './img/3d/vapor-humo-02.webp'];
-  const INTERVALO_MS = 1100;
+  // Espaciado para que casi nunca haya dos a la vez: un detalle discreto que
+  // se nota si te fijás, no un efecto que compite con la foto del producto.
+  const INTERVALO_MS = 3400;
 
   const crearVapor = () => {
     const img = document.createElement('img');
@@ -857,16 +878,15 @@ function initHumoLumpia3D() {
     img.alt = '';
     img.className = 'lumpia3d__vapor';
 
-    // Rango amplio de tamaño/nitidez simula profundidad: las partículas más
-    // grandes y nítidas leen como "más cerca", las chicas y desenfocadas
-    // como "más al fondo" — sin eso el efecto se ve chato y plano.
-    const ancho = 150 + Math.random() * 210;
-    const izquierda = 26 + Math.random() * 46;
-    const duracion = 6 + Math.random() * 3.5;
-    const deriva = (Math.random() > 0.5 ? 1 : -1) * (50 + Math.random() * 70);
-    const rotacion = (Math.random() > 0.5 ? 1 : -1) * (6 + Math.random() * 10);
-    const opacidadMax = 0.55 + Math.random() * 0.3;
-    const nitidez = Math.random() * 2.2;
+    // Chico, tenue y algo desenfocado a propósito — un hilo fino de vapor
+    // real, no una columna de humo pidiendo atención.
+    const ancho = 46 + Math.random() * 38;
+    const izquierda = 36 + Math.random() * 28;
+    const duracion = 7.5 + Math.random() * 3;
+    const deriva = (Math.random() > 0.5 ? 1 : -1) * (22 + Math.random() * 28);
+    const rotacion = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.random() * 6);
+    const opacidadMax = 0.16 + Math.random() * 0.12;
+    const nitidez = 0.7 + Math.random() * 1.2;
 
     img.style.width = `${ancho}px`;
     img.style.left = `${izquierda}%`;
@@ -884,7 +904,6 @@ function initHumoLumpia3D() {
   const iniciar = () => {
     if (intervalo) return;
     crearVapor();
-    setTimeout(crearVapor, 500);
     intervalo = setInterval(crearVapor, INTERVALO_MS);
   };
   const detener = () => {
@@ -908,7 +927,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroColorShift();
   initLluviaLumpias();
   initLumpia3D();
-  initHumoLumpia3D();
   initRuleta();
   renderMenu();
   initToggleTamano();
