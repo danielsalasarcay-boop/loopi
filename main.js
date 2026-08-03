@@ -224,7 +224,7 @@ function renderTarjetaMenu(item) {
   return `
     <article class="card" data-id="${item.id}">
       ${badgeHtml}
-      <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" width="900" height="900" loading="lazy" decoding="async">
+      <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
       <div class="card__body">
         <h3 class="card__title">${item.nombre}</h3>
         <p class="card__desc">${item.descripcion}</p>
