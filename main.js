@@ -911,11 +911,7 @@ function initHumoLumpia3D() {
     intervalo = null;
   };
 
-  const obs = new IntersectionObserver(
-    (entries) => entries.forEach((entry) => (entry.isIntersecting ? iniciar() : detener())),
-    { threshold: 0 }
-  );
-  obs.observe(section);
+  return { iniciar, detener };
 }
 
 /* ============================================================
