@@ -344,9 +344,17 @@ body.no-scroll {
 /* ==========================================================================
    Hero
    ========================================================================== */
-.hero {
-  position: relative;
-  min-height: 82svh;
+/* Portada fija: .hero es un envoltorio alto (140svh) que le da al navegador
+   "pista" de scroll extra; .hero__sticky se pega arriba (position:sticky) y
+   se queda quieta en pantalla mientras ese sobrante se consume, hasta que se
+   acaba y la siguiente sección la tapa al subir. Mismo patrón que .lumpia3d
+   más abajo, aplicado acá a la portada en vez de al zoom del producto. */
+.hero { position: relative; height: 140svh; }
+.hero__sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 560px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -355,6 +363,10 @@ body.no-scroll {
   padding-top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
   padding-bottom: var(--space-2xl);
   text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero { height: auto; }
+  .hero__sticky { position: relative; height: auto; min-height: 82svh; }
 }
 
 /* Capas de color apiladas: rojo es la base fija, morado y naranja se
@@ -412,14 +424,14 @@ body.no-scroll {
 }
 
 .hero__isotipo-wrap {
-  width: clamp(72px, 11vw, 104px);
-  height: clamp(72px, 11vw, 104px);
+  width: clamp(84px, 13vw, 132px);
+  height: clamp(84px, 13vw, 132px);
   border-radius: 50%;
   background: rgba(255, 248, 238, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
   animation: hero-isotipo-spin 24s linear infinite;
 }
 .hero__isotipo { width: 68%; height: 68%; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)); }
@@ -427,30 +439,28 @@ body.no-scroll {
   to { transform: rotate(360deg); }
 }
 
-.hero__logo { width: min(56vw, 220px); height: auto; margin-bottom: var(--space-sm); }
+/* Wordmark como pieza central de la portada: mucho más grande que antes
+   (era min(56vw,220px)) para que el branding domine la composición. */
+.hero__logo-h1 { margin: 0 0 var(--space-md); line-height: 0; }
+/* El viewBox del isotipo (0 0 320 110) deja mucho aire vacío a la derecha
+   entre la palabra "loopi" y el puntito decorativo — centrar el SVG entero
+   centra ESE recuadro, no la palabra, y a este tamaño tan grande se nota:
+   la palabra se ve corrida a la izquierda. Empujar el SVG a la derecha
+   re-centra la palabra a costa del puntito (que ya de por sí es un acento
+   chico, no pasa nada si queda más afuera). */
+.hero__logo { width: min(82vw, 560px); height: auto; transform: translateX(7%); }
 .logo-mark__text--hero { fill: var(--crema); }
-.hero__tagline {
+/* Color inicial (amarillo/naranja de marca) — initHeroColorShift en main.js
+   lo funde hacia el morado a medida que se consume el scroll fijo de la
+   portada, con color-mix() en vez de --naranja fijo. */
+.hero__slogan {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: clamp(2rem, 6vw, 3.2rem);
-  line-height: 1.05;
-  margin-bottom: var(--space-xs);
-}
-.hero__slogan {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: clamp(0.8rem, 1.8vw, 1rem);
-  color: var(--texto-sobre-rojo);
-  margin-bottom: var(--space-sm);
-}
-.hero__subtitle {
-  font-size: 1.1rem;
-  max-width: 42ch;
+  letter-spacing: 0.08em;
+  font-size: clamp(1.15rem, 3.4vw, 1.75rem);
+  color: var(--naranja);
   margin-bottom: var(--space-lg);
-  color: var(--texto-sobre-rojo);
 }
 .hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-sm); }
 
@@ -542,15 +552,42 @@ body.no-scroll {
   font-size: clamp(1.3rem, 4vw, 2rem);
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
 }
-.lumpia3d__reveal-text span {
-  display: block;
-  font-family: var(--font-body);
-  font-weight: 400;
-  text-transform: none;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  opacity: 0.85;
+/* Humo — vapor de las lumpias, generado con nano-banana sobre fondo negro
+   puro y convertido a transparencia real (alpha = luminancia del render:
+   donde el humo brillaba más sobre el negro, más opaco queda el píxel).
+   Nada de mix-blend-mode ni chroma-key: ese primer intento con chroma-key
+   sobre verde se comía el propio humo (translúcido = deja ver el verde de
+   fondo, así que colorkey lo trataba como fondo también) y mix-blend-mode
+   se veía distinto según qué tan clara/oscura fuera la foto de debajo.
+   Con alpha real se ve igual de bien sobre cualquier fondo. Partículas
+   creadas por initHumoLumpia3D en main.js mientras la sección está en
+   pantalla — --vapor-* las randomiza (tamaño, deriva, rotación, opacidad,
+   nitidez) para que cada una se vea distinta. */
+.lumpia3d__humo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
 }
+.lumpia3d__vapor {
+  position: absolute;
+  bottom: 10%;
+  height: auto;
+  opacity: 0;
+  filter: blur(var(--vapor-blur, 0px));
+  animation-name: vapor-subir;
+  animation-timing-function: cubic-bezier(0.25, 0.1, 0.35, 1);
+  animation-fill-mode: forwards;
+}
+@keyframes vapor-subir {
+  0%   { transform: translate(0, 0) scale(0.8) rotate(0deg); opacity: 0; }
+  10%  { opacity: var(--vapor-opacidad, 0.7); }
+  38%  { transform: translate(calc(var(--vapor-drift, 40px) * 0.45), -32vh) scale(1.1) rotate(calc(var(--vapor-rot, 8deg) * 0.5)); }
+  65%  { transform: translate(calc(var(--vapor-drift, 40px) * 0.8), -58vh) scale(1.3) rotate(calc(var(--vapor-rot, 8deg) * -0.65)); opacity: calc(var(--vapor-opacidad, 0.7) * 0.75); }
+  100% { transform: translate(var(--vapor-drift, 40px), -82vh) scale(1.55) rotate(var(--vapor-rot, 8deg)); opacity: 0; }
+}
+
 @media (max-width: 860px) {
   .lumpia3d { height: 170svh; }
 }
@@ -569,6 +606,7 @@ body.no-scroll {
   .lumpia3d__bg { position: absolute; inset: 0; opacity: 1; transform: none; }
   .lumpia3d__porthole { width: min(90vw, 480px); border-radius: var(--radius-card); }
   .lumpia3d__reveal-text { position: relative; left: auto; bottom: auto; transform: none; opacity: 1; margin-top: 0; }
+  .lumpia3d__humo { display: none; }
 }
 
 /* ==========================================================================
@@ -686,7 +724,7 @@ body.no-scroll {
 /* ==========================================================================
    Menú
    ========================================================================== */
-.menu { padding-top: var(--space-2xl); }
+.menu { padding-top: var(--space-xl); }
 .menu__head { text-align: center; padding-inline: var(--space-md); }
 .menu__head .section-subtitle { margin-inline: auto; }
 
@@ -717,7 +755,7 @@ body.no-scroll {
   box-shadow: var(--shadow-rojo);
 }
 
-.menu__block { padding-block: var(--space-xl); }
+.menu__block { padding-block: var(--space-lg); }
 .menu__block--salados { background: var(--naranja); }
 .menu__block--postres { background: var(--morado); color: var(--crema); }
 
@@ -730,16 +768,15 @@ body.no-scroll {
 }
 .menu__block-title--light { color: var(--crema); }
 
+/* 2 columnas desde mobile (antes 1) para que el menú no se estire en una
+   sola torre larguísima de tarjetas — página más corta y fácil de recorrer. */
 .menu__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
 }
-@media (min-width: 640px) {
-  .menu__grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1024px) {
-  .menu__grid { grid-template-columns: repeat(3, 1fr); }
+@media (min-width: 720px) {
+  .menu__grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
 }
 
 /* Tarjetas */
@@ -754,16 +791,25 @@ body.no-scroll {
   flex-direction: column;
 }
 .card:hover { transform: scale(1.03); box-shadow: var(--shadow-rojo); }
-.card__img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
-.card__body { padding: var(--space-md); display: flex; flex-direction: column; gap: 0.4rem; }
+/* 4/5 en vez de 1/1: con 2 columnas desde mobile, cuadrada quedaba
+   demasiado alta — más corta acelera el recorrido de la sección. */
+.card__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.card__body { padding: var(--space-sm); display: flex; flex-direction: column; gap: 0.3rem; }
 .card__title {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: var(--negro);
 }
-.card__desc { color: var(--texto-muted); font-size: 0.95rem; margin-bottom: 0.4rem; }
+.card__desc { color: var(--texto-muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+.card .btn--whatsapp { padding: 0.65rem 1rem; font-size: 0.85rem; }
+@media (min-width: 720px) {
+  .card__body { padding: var(--space-md); gap: 0.4rem; }
+  .card__title { font-size: 1.15rem; }
+  .card__desc { font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .card .btn--whatsapp { padding: 0.9rem 1.8rem; font-size: 1rem; }
+}
 .card__badge {
   position: absolute;
   top: var(--space-sm);
@@ -1002,59 +1048,28 @@ body.no-scroll {
 .nosotros__media img { border-radius: var(--radius-card); box-shadow: var(--shadow-suave); }
 
 /* ==========================================================================
-   Instagram
-   ========================================================================== */
-.instagram {
-  position: relative;
-  background: var(--morado);
-  color: var(--crema);
-  padding-block: var(--space-2xl);
-  text-align: center;
-  overflow: hidden;
-}
-.instagram__pattern {
-  position: absolute;
-  inset: 0;
-  opacity: 0.12;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cpath d='M90 90 m0 -4 a4 4 0 1 1 4 4 a10 10 0 1 1 -10 -10 a16 16 0 1 1 16 16 a22 22 0 1 1 -22 -22 a28 28 0 1 1 28 28 a34 34 0 1 1 -34 -34' fill='none' stroke='%23FFF8EE' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-.instagram__inner { position: relative; }
-.instagram__eyebrow { text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 0.3rem; }
-.instagram__handle {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  margin-bottom: var(--space-md);
-}
-.instagram__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-xs);
-  max-width: 640px;
-  margin: var(--space-lg) auto 0;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
-.instagram__grid img { aspect-ratio: 1/1; object-fit: cover; transition: transform var(--transition-med); }
-.instagram__grid a:hover img { transform: scale(1.06); }
-
-/* ==========================================================================
    Contacto
    ========================================================================== */
-.contacto { padding-block: var(--space-2xl); background: var(--crema); }
+/* Fondo negro (antes crema, igual que Nosotros justo arriba y sin corte
+   visual entre ambas). El footer ahora es blanco/crema, así que Nosotros
+   crema → Contacto negro → Footer crema queda igual de diferenciado. */
+.contacto { padding-block: var(--space-2xl); background: var(--negro); color: var(--crema); }
+.contacto .section-title { color: var(--crema); }
 .contacto__info { max-width: 480px; margin-inline: auto; }
 .contacto__lista { display: grid; gap: var(--space-sm); }
-.contacto__lista dt { font-weight: 700; color: var(--rojo); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
-.contacto__lista dd { font-size: 1rem; }
+.contacto__lista dt { font-weight: 700; color: var(--naranja); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.contacto__lista dd { font-size: 1rem; color: var(--crema); }
 
 /* ==========================================================================
    Footer
    ========================================================================== */
+/* Morado con el mismo patrón de espirales de la portada (::before en vez de
+   duplicar el div en el HTML de dos páginas) — mismo tratamiento visual,
+   pie de página con identidad propia en vez de un bloque negro genérico. */
 .footer {
   position: relative;
   overflow: hidden;
-  background: var(--negro);
+  background: var(--morado);
   color: var(--crema);
   padding-top: var(--space-lg);
   /* El carrito flotante (bottom-left) y los botones de WhatsApp/Instagram
@@ -1066,31 +1081,19 @@ body.no-scroll {
      iPhones con notch. */
   padding-bottom: calc(var(--space-lg) + 64px + env(safe-area-inset-bottom, 0px));
 }
-/* Foto de fondo a sangre completa (antes era un recuadro de 640px arriba
-   del texto, ocupando mucho alto). object-fit:cover + object-position:center
-   deja el bolso/logo visibles en cualquier proporción de pantalla: la imagen
-   se generó panorámica (21:9) con espacio negro de sobra a los lados para
-   que el recorte nunca corte al sujeto. */
-.footer__bg {
+.footer::before {
+  content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-/* Scrim oscuro parejo sobre la foto para que el texto crema mantenga
-   contraste AA sin importar si cae sobre el bolso (más claro) o el fondo. */
-.footer__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: rgba(17, 17, 17, 0.6);
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M80 80 m0 -4 a4 4 0 1 1 4 4 a10 10 0 1 1 -10 -10 a16 16 0 1 1 16 16 a22 22 0 1 1 -22 -22 a28 28 0 1 1 28 28' fill='none' stroke='%23FFF8EE' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  pointer-events: none;
 }
 .footer__inner {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   width: 100%;
   display: flex;
   flex-direction: column;

@@ -26,8 +26,7 @@ const CONFIG = {
     horario: 'Lunes a domingo, 9:00am a 6:00pm',
     // PENDIENTE: zonas de Caracas donde se hace delivery.
     zonaDelivery: 'PENDIENTE — ej. Caracas (Este, Centro, Los Palos Grandes...)',
-    // PENDIENTE: métodos de pago aceptados.
-    metodosPago: 'PENDIENTE — ej. Pago móvil, Zelle, Efectivo',
+    metodosPago: 'Pago móvil, Zelle, Efectivo',
     email: 'Loopicaracas@gmail.com',
   },
 };
@@ -685,11 +684,14 @@ function initPreloader() {
 initPreloader();
 
 /* ============================================================
-   Hero — cambio de paleta al hacer scroll (solo el fondo de la
-   portada): arranca en rojo, el morado se funde al llegar a la
-   mitad del recorrido del hero, y hacia el final entra el naranja
-   como color principal junto al rojo. Progreso 0–1 relativo a la
-   altura del propio hero, sin pines ni librerías.
+   Hero — portada fija (.hero__sticky, ver CSS) con cambio de
+   paleta al hacer scroll: arranca en rojo, el morado se funde a
+   mitad del recorrido fijo y hacia el final entra el naranja junto
+   al rojo. El slogan "Golden. Crispy. Premium." pasa de naranja a
+   morado en el mismo recorrido, de forma lineal. Progreso 0–1
+   relativo al alto "de sobra" del envoltorio (offsetHeight menos
+   una pantalla) — igual que initLumpia3D, porque .hero también usa
+   el patrón envoltorio-alto + position:sticky.
    ============================================================ */
 function initHeroColorShift() {
   const hero = document.querySelector('#hero');
@@ -697,6 +699,7 @@ function initHeroColorShift() {
 
   const capaMorado = hero.querySelector('.hero__capa--morado');
   const capaNaranja = hero.querySelector('.hero__capa--naranja');
+  const slogan = document.querySelector('#hero-slogan');
   if (!capaMorado || !capaNaranja) return;
 
   let ticking = false;
@@ -704,8 +707,9 @@ function initHeroColorShift() {
   const actualizar = () => {
     ticking = false;
     const rect = hero.getBoundingClientRect();
-    const alto = hero.offsetHeight || 1;
-    const progreso = Math.min(1, Math.max(0, -rect.top / alto));
+    const distanciaTotal = hero.offsetHeight - window.innerHeight;
+    if (distanciaTotal <= 0) return;
+    const progreso = Math.min(1, Math.max(0, -rect.top / distanciaTotal));
 
     // El morado sube y baja, con pico a mitad de camino.
     const morado = Math.max(0, 1 - Math.abs(progreso - 0.5) * 2);
@@ -716,6 +720,10 @@ function initHeroColorShift() {
 
     capaMorado.style.opacity = String(morado);
     capaNaranja.style.opacity = String(naranja);
+
+    if (slogan) {
+      slogan.style.color = `color-mix(in srgb, var(--naranja), var(--morado) ${Math.round(progreso * 100)}%)`;
+    }
   };
 
   const onScroll = () => {
@@ -826,6 +834,72 @@ function initLumpia3D() {
 }
 
 /* ============================================================
+   Humo de las lumpias — vapor flotando dentro de #lumpia3d
+   mientras la sección está en pantalla. Cada partícula es una
+   imagen de humo con transparencia real (ver comentario de
+   .lumpia3d__vapor en styles.css) que sube, se curva de lado a
+   lado, gira suave y se desvanece — mismo patrón que
+   initLluviaLumpias, pero en loop continuo, con dos o tres
+   partículas superpuestas para que se vea denso, y con
+   IntersectionObserver para no animar nada fuera de pantalla.
+   ============================================================ */
+function initHumoLumpia3D() {
+  const contenedor = document.querySelector('#lumpia3d-humo');
+  const section = document.querySelector('#lumpia3d');
+  if (!contenedor || !section || prefersReducedMotion()) return;
+
+  const SPRITES = ['./img/3d/vapor-humo-01.webp', './img/3d/vapor-humo-02.webp'];
+  const INTERVALO_MS = 1100;
+
+  const crearVapor = () => {
+    const img = document.createElement('img');
+    img.src = SPRITES[Math.floor(Math.random() * SPRITES.length)];
+    img.alt = '';
+    img.className = 'lumpia3d__vapor';
+
+    // Rango amplio de tamaño/nitidez simula profundidad: las partículas más
+    // grandes y nítidas leen como "más cerca", las chicas y desenfocadas
+    // como "más al fondo" — sin eso el efecto se ve chato y plano.
+    const ancho = 150 + Math.random() * 210;
+    const izquierda = 26 + Math.random() * 46;
+    const duracion = 6 + Math.random() * 3.5;
+    const deriva = (Math.random() > 0.5 ? 1 : -1) * (50 + Math.random() * 70);
+    const rotacion = (Math.random() > 0.5 ? 1 : -1) * (6 + Math.random() * 10);
+    const opacidadMax = 0.55 + Math.random() * 0.3;
+    const nitidez = Math.random() * 2.2;
+
+    img.style.width = `${ancho}px`;
+    img.style.left = `${izquierda}%`;
+    img.style.setProperty('--vapor-drift', `${deriva}px`);
+    img.style.setProperty('--vapor-rot', `${rotacion}deg`);
+    img.style.setProperty('--vapor-opacidad', String(opacidadMax));
+    img.style.setProperty('--vapor-blur', `${nitidez}px`);
+    img.style.animationDuration = `${duracion}s`;
+
+    contenedor.appendChild(img);
+    img.addEventListener('animationend', () => img.remove());
+  };
+
+  let intervalo = null;
+  const iniciar = () => {
+    if (intervalo) return;
+    crearVapor();
+    setTimeout(crearVapor, 500);
+    intervalo = setInterval(crearVapor, INTERVALO_MS);
+  };
+  const detener = () => {
+    clearInterval(intervalo);
+    intervalo = null;
+  };
+
+  const obs = new IntersectionObserver(
+    (entries) => entries.forEach((entry) => (entry.isIntersecting ? iniciar() : detener())),
+    { threshold: 0 }
+  );
+  obs.observe(section);
+}
+
+/* ============================================================
    Init general
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -834,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroColorShift();
   initLluviaLumpias();
   initLumpia3D();
+  initHumoLumpia3D();
   initRuleta();
   renderMenu();
   initToggleTamano();
