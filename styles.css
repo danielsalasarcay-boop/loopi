@@ -253,6 +253,18 @@ body.no-scroll {
   gap: var(--space-md);
   width: 100%;
 }
+.header__logo { display: inline-grid; height: 40px; }
+.header__logo-img {
+  grid-area: 1 / 1;
+  height: 40px;
+  width: auto;
+  transition: opacity var(--transition-med);
+}
+.header__logo-img--crema { opacity: 1; }
+.header__logo-img--rojo { opacity: 0; }
+.header--scrolled .header__logo-img--crema { opacity: 0; }
+.header--scrolled .header__logo-img--rojo { opacity: 1; }
+
 .logo-mark__text {
   font-family: var(--font-heading);
   font-weight: 800;
@@ -287,11 +299,6 @@ body.no-scroll {
   justify-content: center;
   width: 44px;
   height: 44px;
-  /* Sin el logo a la izquierda, el hamburguesa es el único hijo visible
-     del header en mobile — margin-left:auto lo mantiene pegado a la
-     derecha sin importar si justify-content:space-between del padre
-     tiene otros hijos o no. */
-  margin-left: auto;
   color: var(--crema);
   transition: color var(--transition-med);
 }
@@ -1068,26 +1075,9 @@ body.no-scroll {
 }
 
 /* ==========================================================================
-   Nosotros
-   ========================================================================== */
-.nosotros { padding-block: var(--space-2xl); background: var(--crema); }
-.nosotros__grid {
-  display: grid;
-  gap: var(--space-lg);
-  align-items: center;
-}
-@media (min-width: 860px) {
-  .nosotros__grid { grid-template-columns: 1fr 1fr; }
-}
-.nosotros__copy p { font-size: 1.1rem; line-height: 1.6; max-width: 48ch; }
-.nosotros__media img { border-radius: var(--radius-card); box-shadow: var(--shadow-suave); }
-
-/* ==========================================================================
    Contacto
    ========================================================================== */
-/* Fondo negro (antes crema, igual que Nosotros justo arriba y sin corte
-   visual entre ambas). El footer ahora es blanco/crema, así que Nosotros
-   crema → Contacto negro → Footer crema queda igual de diferenciado. */
+/* Fondo negro para diferenciar del footer crema justo debajo. */
 .contacto { padding-block: var(--space-2xl); background: var(--negro); color: var(--crema); }
 .contacto .section-title { color: var(--crema); }
 .contacto__info { max-width: 480px; margin-inline: auto; }
