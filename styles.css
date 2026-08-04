@@ -253,8 +253,6 @@ body.no-scroll {
   gap: var(--space-md);
   width: 100%;
 }
-.header__logo { display: block; height: 34px; }
-.logo-mark { height: 34px; width: auto; overflow: visible; }
 .logo-mark__text {
   font-family: var(--font-heading);
   font-weight: 800;
@@ -289,6 +287,11 @@ body.no-scroll {
   justify-content: center;
   width: 44px;
   height: 44px;
+  /* Sin el logo a la izquierda, el hamburguesa es el único hijo visible
+     del header en mobile — margin-left:auto lo mantiene pegado a la
+     derecha sin importar si justify-content:space-between del padre
+     tiene otros hijos o no. */
+  margin-left: auto;
   color: var(--crema);
   transition: color var(--transition-med);
 }
@@ -377,15 +380,6 @@ body.no-scroll {
 .hero__capa--morado { background: var(--morado); z-index: 1; opacity: 0; }
 .hero__capa--naranja { background: var(--naranja); z-index: 2; opacity: 0; }
 
-.hero__pattern {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  opacity: 0.14;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M80 80 m0 -4 a4 4 0 1 1 4 4 a10 10 0 1 1 -10 -10 a16 16 0 1 1 16 16 a22 22 0 1 1 -22 -22 a28 28 0 1 1 28 28' fill='none' stroke='%23FFF8EE' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
-
 .hero__lluvia {
   position: absolute;
   inset: 0;
@@ -441,15 +435,51 @@ body.no-scroll {
 
 /* Wordmark como pieza central de la portada: mucho más grande que antes
    (era min(56vw,220px)) para que el branding domine la composición. */
-.hero__logo-h1 { margin: 0 0 var(--space-md); line-height: 0; }
-/* El viewBox del isotipo (0 0 320 110) deja mucho aire vacío a la derecha
-   entre la palabra "loopi" y el puntito decorativo — centrar el SVG entero
-   centra ESE recuadro, no la palabra, y a este tamaño tan grande se nota:
-   la palabra se ve corrida a la izquierda. Empujar el SVG a la derecha
-   re-centra la palabra a costa del puntito (que ya de por sí es un acento
-   chico, no pasa nada si queda más afuera). */
-.hero__logo { width: min(82vw, 560px); height: auto; transform: translateX(7%); }
-.logo-mark__text--hero { fill: var(--crema); }
+.hero__logo-h1 {
+  position: relative;
+  margin: 0 0 var(--space-md);
+  line-height: 0;
+  overflow: hidden;
+}
+/* Logo cursivo oficial en amarillo/naranja de marca (no el rojo original
+   del archivo) — el fondo de la portada pasa por rojo, morado y un tinte
+   naranja según el scroll (initHeroColorShift), y un logo rojo se pierde
+   contra el estado rojo base. Naranja mantiene buen contraste en los tres. */
+.hero__logo {
+  width: min(82vw, 560px);
+  height: auto;
+  /* Arranca "sin escribir" — clip-path lo revela de izquierda a derecha
+     cuando .hero__copy entra en pantalla (mismo trigger data-reveal que ya
+     usa el resto del hero). No es trazo vectorial real (el archivo es un
+     logo de imagen, no un path a mano) — un wipe de izquierda a derecha es
+     la forma confiable de simular "se está escribiendo" sobre un raster. */
+  clip-path: inset(0 100% 0 0);
+}
+.hero__copy.is-visible .hero__logo {
+  animation: logo-escribir 2.8s cubic-bezier(0.65, 0, 0.35, 1) 0.35s forwards;
+}
+@keyframes logo-escribir {
+  to { clip-path: inset(0 0% 0 0); }
+}
+/* Brillo sutil que recorre el logo en sincro con el wipe — apenas se nota,
+   solo insinúa que algo "brilla" mientras se escribe, sin verse como un
+   reflejo de vidrio. mix-blend-mode:overlay para que ilumine el naranja
+   sin taparlo de blanco. */
+.hero__logo-h1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 38%, rgba(255, 248, 238, 0.35) 48%, rgba(255, 248, 238, 0.35) 52%, transparent 62%);
+  mix-blend-mode: overlay;
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+.hero__copy.is-visible .hero__logo-h1::after {
+  animation: logo-brillo 2.8s cubic-bezier(0.65, 0, 0.35, 1) 0.35s forwards;
+}
+@keyframes logo-brillo {
+  to { transform: translateX(130%); }
+}
 /* Color inicial (amarillo/naranja de marca) — initHeroColorShift en main.js
    lo funde hacia el morado a medida que se consume el scroll fijo de la
    portada, con color-mix() en vez de --naranja fijo. */
@@ -646,6 +676,8 @@ body.no-scroll {
     transform: none !important;
     opacity: 1 !important;
   }
+  .hero__logo { animation: none !important; clip-path: none !important; }
+  .hero__logo-h1::after { animation: none !important; content: none; }
 }
 
 /* ==========================================================================

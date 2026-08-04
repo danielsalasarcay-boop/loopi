@@ -26,7 +26,7 @@ const CONFIG = {
     horario: 'Lunes a domingo, 9:00am a 6:00pm',
     // PENDIENTE: zonas de Caracas donde se hace delivery.
     zonaDelivery: 'PENDIENTE — ej. Caracas (Este, Centro, Los Palos Grandes...)',
-    metodosPago: 'Pago móvil, Zelle, Efectivo',
+    metodosPago: 'Pago móvil, Zelle, Efectivo, Zinli, Binance',
     email: 'Loopicaracas@gmail.com',
   },
 };
