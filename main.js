@@ -21,15 +21,20 @@ const CONFIG = {
   },
 
   contacto: {
-    // PENDIENTE: dirección exacta del local o punto de despacho.
-    direccion: 'PENDIENTE — dirección del local / punto de despacho en Caracas',
     horario: 'Lunes a domingo, 9:00am a 6:00pm',
-    // PENDIENTE: zonas de Caracas donde se hace delivery.
-    zonaDelivery: 'PENDIENTE — ej. Caracas (Este, Centro, Los Palos Grandes...)',
+    zonaDelivery: 'Caracas (los costos varían entre 3-4$ dependiendo de tu zona)',
     metodosPago: 'Pago móvil, Zelle, Efectivo, Zinli, Binance',
     email: 'Loopicaracas@gmail.com',
   },
 };
+
+// Precio por bolsita según tamaño — igual para todos los sabores.
+const PRECIOS = { 12: 10, 24: 20 };
+const TAMANOS = [12, 24];
+
+function claveItem(id, tamano) {
+  return `${id}-${tamano}`;
+}
 
 /* ============================================================
    MENU — catálogo de sabores. Agregar un sabor nuevo es
@@ -40,15 +45,16 @@ const MENU = [
     id: 'vegetales',
     nombre: 'Vegetales',
     categoria: 'salado',
-    descripcion: 'La clásica. Vegetales salteados, crunchy por fuera.',
+    descripcion: 'Vegetales salteados y jamón.',
     img: './img/productos/vegetales.webp',
-    badge: null,
+    imgRuleta: './img/sabores/vegetales.webp',
+    badge: 'La clásica',
   },
   {
     id: 'carbonara',
     nombre: 'Carbonara',
     categoria: 'salado',
-    descripcion: 'Cremosa, con tocineta y queso.',
+    descripcion: 'Cremosa, con tocineta y queso pecorino.',
     img: './img/productos/carbonara.webp',
     badge: 'La más pedida',
   },
@@ -56,24 +62,27 @@ const MENU = [
     id: 'pollo-curry',
     nombre: 'Pollo al Curry',
     categoria: 'salado',
-    descripcion: 'Pollo especiado con un toque de curry suave.',
+    descripcion: 'Pollo con un toque de curry exótico.',
     img: './img/productos/pollo-curry.webp',
-    badge: null,
+    imgRuleta: './img/sabores/pollo-curry.webp',
+    badge: 'La irresistible',
   },
   {
     id: 'funghi',
     nombre: 'Funghi',
     categoria: 'salado',
-    descripcion: 'Hongos salteados y queso cremoso.',
+    descripcion: 'Diferentes tipos de hongos salteados.',
     img: './img/productos/funghi.webp',
-    badge: null,
+    imgRuleta: './img/sabores/funghi.webp',
+    badge: 'La fitness',
   },
   {
     id: 'morcilla-carupanera',
     nombre: 'Morcilla Carupanera',
     categoria: 'salado',
-    descripcion: 'Morcilla de Carúpano. Sabor venezolano de verdad.',
+    descripcion: 'Directo de Carúpano, sabor venezolano.',
     img: './img/productos/morcilla-carupanera.webp',
+    imgRuleta: './img/sabores/morcilla-carupanera.webp',
     badge: 'La local',
   },
   {
@@ -82,15 +91,15 @@ const MENU = [
     categoria: 'postre',
     descripcion: 'Caramelo salado, dulce con carácter.',
     img: './img/productos/salted-caramel.webp',
-    badge: null,
+    badge: 'La explosiva',
   },
   {
     id: 'nutella',
     nombre: 'Nutella',
     categoria: 'postre',
-    descripcion: 'Nutella tibia y derretida por dentro.',
+    descripcion: 'Nutella es nutella.',
     img: './img/productos/nutella.webp',
-    badge: null,
+    badge: 'La tentación',
   },
 ];
 
@@ -128,22 +137,18 @@ function buildWhatsAppUrl(mensaje) {
   return `https://wa.me/${CONFIG.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
-function mensajeProducto(nombre, tamano) {
-  return `Hola loopi! 👋 Quiero pedir una cajita de *${tamano} mini lumpias de ${nombre}*. ¿Está disponible?`;
-}
-
 function mensajeGenerico() {
   return `Hola loopi! 👋 Quiero hacer un pedido de mini lumpias.`;
 }
 
-// Los precios los cotiza quien atiende WhatsApp — el mensaje solo lista
-// sabores y cantidades, nunca un monto.
-function mensajePedido(tamano, items) {
+// items ya viene filtrado a cantidad > 0. El mensaje lleva precio por línea
+// y el total, para que el pedido llegue completo por WhatsApp.
+function mensajePedido(items) {
   const lineas = items
-    .filter((i) => i.cantidad > 0)
-    .map((i) => `• ${i.cantidad}x Cajita de ${tamano} — ${i.nombre}`)
+    .map((i) => `• ${i.cantidad}x Bolsita de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
     .join('\n');
-  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\n¿Me confirman disponibilidad y precio?`;
+  const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
+  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\nTotal: $${total}\n\n¿Me confirman disponibilidad, forma de pago y costo del delivery?`;
 }
 
 /* ============================================================
@@ -156,6 +161,7 @@ const ICONS = {
   close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>`,
   plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`,
   minus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>`,
+  trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13M10 11v6M14 11v6"/></svg>`,
   paso1: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/></svg>`,
   paso2: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg>`,
   paso3: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l1-3h11l1 3M3 7h13m-13 0v9a1 1 0 0 0 1 1h1m11-10v10h-8m8-10 4 4v6h-4M6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>`,
@@ -215,23 +221,39 @@ function initBotonesGenericos() {
 }
 
 /* ============================================================
-   Menú de sabores — toggle 12/24 + tarjetas
+   Menú de sabores — una tarjeta por sabor, con los dos tamaños
+   (12 y 24) juntos adentro, cada uno con su precio y su stepper.
    ============================================================ */
-const stateMenu = { tamano: 12 };
+function renderFilaTamano(item, tamano) {
+  const clave = claveItem(item.id, tamano);
+  const cantidad = statePedido.cantidades[clave] || 0;
+  return `
+    <div class="card__tamano-row">
+      <span class="card__tamano-label">Bolsita ${tamano} <strong>$${PRECIOS[tamano]}</strong></span>
+      <button type="button" class="card__borrar" data-borrar-clave="${clave}" aria-label="Quitar bolsitas de ${tamano} de ${item.nombre}" ${cantidad === 0 ? 'hidden' : ''}>${ICONS.trash}</button>
+      <div class="stepper card__stepper">
+        <button type="button" class="stepper__btn" data-accion="mas" data-clave="${clave}" aria-label="Agregar una bolsita de ${tamano} de ${item.nombre}">${ICONS.plus}</button>
+        <span class="stepper__cantidad" data-clave-cantidad="${clave}">${cantidad}</span>
+        <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar una bolsita de ${tamano} de ${item.nombre}">${ICONS.minus}</button>
+      </div>
+    </div>`;
+}
 
 function renderTarjetaMenu(item) {
   const badgeHtml = item.badge ? `<span class="card__badge">${item.badge}</span>` : '';
   return `
-    <article class="card" data-id="${item.id}">
+    <article class="card">
       ${badgeHtml}
       <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
       <div class="card__body">
-        <h3 class="card__title">${item.nombre}</h3>
+        <div class="card__title-row">
+          <h3 class="card__title">${item.nombre}</h3>
+          <span class="card__unidades" data-item-unidades="${item.id}" hidden>0 unidades</span>
+        </div>
         <p class="card__desc">${item.descripcion}</p>
-        <a class="btn btn--whatsapp" data-wa-item target="_blank" rel="noopener" href="#" aria-label="Pedir ${item.nombre} por WhatsApp">
-          ${ICONS.whatsapp}
-          <span>Pedir por WhatsApp</span>
-        </a>
+        <div class="card__tamanos">
+          ${TAMANOS.map((t) => renderFilaTamano(item, t)).join('')}
+        </div>
       </div>
     </article>`;
 }
@@ -244,32 +266,6 @@ function renderMenu() {
   const postres = MENU.filter((m) => m.categoria === 'postre');
   gridSalados.innerHTML = salados.map(renderTarjetaMenu).join('');
   gridPostres.innerHTML = postres.map(renderTarjetaMenu).join('');
-  actualizarLinksMenu();
-}
-
-function actualizarLinksMenu() {
-  document.querySelectorAll('.card').forEach((card) => {
-    const item = MENU.find((m) => m.id === card.dataset.id);
-    card.querySelector('[data-wa-item]').setAttribute(
-      'href',
-      buildWhatsAppUrl(mensajeProducto(item.nombre, stateMenu.tamano))
-    );
-  });
-}
-
-function initToggleTamano() {
-  // :not([data-pedido-size-btn]) evita que este toggle (el del grid de
-  // precios) reaccione a clicks en el toggle de tamaño del carrito/pedido,
-  // que es un estado independiente manejado por initPedido().
-  const botones = document.querySelectorAll('.size-toggle__btn:not([data-pedido-size-btn])');
-  botones.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      stateMenu.tamano = Number(btn.dataset.tamano);
-      botones.forEach((b) => b.classList.toggle('is-active', b === btn));
-      botones.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      actualizarLinksMenu();
-    });
-  });
 }
 
 /* ============================================================
@@ -300,52 +296,52 @@ function guardarPedido() {
 }
 
 const pedidoGuardado = cargarPedidoGuardado();
-const statePedido = {
-  tamano: pedidoGuardado && pedidoGuardado.tamano === 24 ? 24 : 12,
-  cantidades: Object.fromEntries(
-    MENU.map((m) => [m.id, Math.max(0, Number(pedidoGuardado && pedidoGuardado.cantidades && pedidoGuardado.cantidades[m.id]) || 0)])
-  ),
-};
+const statePedido = { cantidades: {} };
+MENU.forEach((item) => {
+  TAMANOS.forEach((tamano) => {
+    const clave = claveItem(item.id, tamano);
+    const guardado = pedidoGuardado && pedidoGuardado.cantidades && pedidoGuardado.cantidades[clave];
+    statePedido.cantidades[clave] = Math.max(0, Number(guardado) || 0);
+  });
+});
 
-function renderFilaPedido(item) {
-  const cantidad = statePedido.cantidades[item.id];
+// Lista de líneas con cantidad > 0, con nombre/tamaño/precio ya resueltos —
+// la usan el resumen del carrito y el mensaje de WhatsApp.
+function itemsDelPedido() {
+  const items = [];
+  MENU.forEach((item) => {
+    TAMANOS.forEach((tamano) => {
+      const clave = claveItem(item.id, tamano);
+      const cantidad = statePedido.cantidades[clave];
+      if (cantidad > 0) {
+        items.push({ id: item.id, clave, nombre: item.nombre, categoria: item.categoria, tamano, cantidad, precioUnit: PRECIOS[tamano] });
+      }
+    });
+  });
+  return items;
+}
+
+function renderLineaCarrito(i) {
   return `
-    <div class="config-row" data-id="${item.id}">
-      <img class="config-row__img" src="${item.img}" alt="" width="64" height="64" loading="lazy">
-      <div class="config-row__info">
-        <p class="config-row__nombre">${item.nombre}</p>
-      </div>
-      <div class="config-row__stepper">
-        <button type="button" class="stepper__btn" data-accion="menos" data-id="${item.id}" aria-label="Quitar una cajita de ${item.nombre}">${ICONS.minus}</button>
-        <span class="stepper__cantidad" data-cantidad>${cantidad}</span>
-        <button type="button" class="stepper__btn" data-accion="mas" data-id="${item.id}" aria-label="Agregar una cajita de ${item.nombre}">${ICONS.plus}</button>
-      </div>
+    <div class="carrito-linea">
+      <span class="carrito-linea__desc">${i.cantidad}x Bolsita de ${i.tamano} — ${i.nombre}</span>
+      <strong class="carrito-linea__precio">$${i.cantidad * i.precioUnit}</strong>
+      <button type="button" class="carrito-linea__borrar" data-borrar-clave="${i.clave}" aria-label="Quitar ${i.nombre} de ${i.tamano} del pedido">${ICONS.trash}</button>
     </div>`;
 }
 
-// Vuelve a pintar todas las listas de pedido presentes en la página
-// (la sección "Arma tu pedido" y/o el panel flotante) y refresca totales.
-function renderListasPedido() {
-  document.querySelectorAll('[data-pedido-lista]').forEach((cont) => {
-    cont.innerHTML = MENU.map(renderFilaPedido).join('');
-  });
-  actualizarPedidoUI();
-}
-
-// Actualiza unidades, botón de WhatsApp, contador del carrito y estado
-// visual del toggle de tamaño en TODOS los lugares de la página que los
-// usen (data-attributes, no IDs fijos → funciona en cualquier combinación
-// de secciones presentes). Sin precios: eso lo cotiza quien atiende WhatsApp.
+// Actualiza unidades, total, resumen del carrito (solo lo ya agregado, sin
+// pedir seleccionar de nuevo) y el botón de WhatsApp en todos los lugares
+// de la página que los usen (data-attributes, no IDs fijos).
 function actualizarPedidoUI() {
-  let unidades = 0;
-  MENU.forEach((item) => {
-    unidades += statePedido.cantidades[item.id];
-  });
-  const items = MENU.map((item) => ({ nombre: item.nombre, cantidad: statePedido.cantidades[item.id] }));
+  const items = itemsDelPedido();
+  const unidades = items.reduce((sum, i) => sum + i.cantidad, 0);
+  const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
   const hayItems = unidades > 0;
-  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(statePedido.tamano, items)) : '#';
+  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(items)) : '#';
 
   document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
+  document.querySelectorAll('[data-pedido-total]').forEach((el) => { el.textContent = `$${total}`; });
   document.querySelectorAll('[data-pedido-vacio]').forEach((el) => { el.hidden = hayItems; });
   document.querySelectorAll('[data-pedido-contenido]').forEach((el) => { el.hidden = !hayItems; });
   document.querySelectorAll('[data-pedido-whatsapp]').forEach((btn) => {
@@ -357,36 +353,54 @@ function actualizarPedidoUI() {
     el.textContent = String(unidades);
     el.hidden = unidades === 0;
   });
-  document.querySelectorAll('[data-pedido-size-btn]').forEach((btn) => {
-    const activo = Number(btn.dataset.tamano) === statePedido.tamano;
-    btn.classList.toggle('is-active', activo);
-    btn.setAttribute('aria-pressed', String(activo));
+  document.querySelectorAll('[data-carrito-lista]').forEach((cont) => {
+    cont.innerHTML = items.map(renderLineaCarrito).join('');
+  });
+
+  document.querySelectorAll('[data-item-unidades]').forEach((el) => {
+    const id = el.dataset.itemUnidades;
+    const unidadesItem = items
+      .filter((i) => i.id === id)
+      .reduce((sum, i) => sum + i.cantidad, 0);
+    el.textContent = `${unidadesItem} unidades`;
+    el.hidden = unidadesItem === 0;
+  });
+
+  // Papeleras de las tarjetas del menú (las del resumen del carrito ya se
+  // regeneran solas arriba con innerHTML, no hace falta tocarlas acá).
+  document.querySelectorAll('.card__borrar[data-borrar-clave]').forEach((btn) => {
+    const clave = btn.dataset.borrarClave;
+    btn.hidden = (statePedido.cantidades[clave] || 0) === 0;
   });
 
   guardarPedido();
 }
 
 function initPedido() {
-  const haySecciones = document.querySelector('[data-pedido-lista]') || document.querySelector('[data-pedido-badge]');
+  const haySecciones = document.querySelector('[data-pedido-badge]') || document.querySelector('[data-carrito-lista]');
   if (!haySecciones) return;
 
-  renderListasPedido();
+  actualizarPedidoUI();
 
-  // Delegado en document: cubre steppers en la sección Y en el panel flotante.
+  // Delegado en document: cubre los steppers de cada tarjeta del menú.
   document.addEventListener('click', (e) => {
-    const btnSize = e.target.closest('[data-pedido-size-btn]');
-    if (btnSize) {
-      statePedido.tamano = Number(btnSize.dataset.tamano);
-      renderListasPedido();
+    const btnStep = e.target.closest('.stepper__btn[data-clave]');
+    if (btnStep) {
+      const clave = btnStep.dataset.clave;
+      const delta = btnStep.dataset.accion === 'mas' ? 1 : -1;
+      statePedido.cantidades[clave] = Math.max(0, (statePedido.cantidades[clave] || 0) + delta);
+      document.querySelectorAll(`[data-clave-cantidad="${clave}"]`).forEach((el) => {
+        el.textContent = String(statePedido.cantidades[clave]);
+      });
+      actualizarPedidoUI();
       return;
     }
-    const btnStep = e.target.closest('.stepper__btn');
-    if (btnStep) {
-      const id = btnStep.dataset.id;
-      const delta = btnStep.dataset.accion === 'mas' ? 1 : -1;
-      statePedido.cantidades[id] = Math.max(0, statePedido.cantidades[id] + delta);
-      document.querySelectorAll(`.config-row[data-id="${id}"] [data-cantidad]`).forEach((el) => {
-        el.textContent = String(statePedido.cantidades[id]);
+    const btnBorrar = e.target.closest('[data-borrar-clave]');
+    if (btnBorrar) {
+      const clave = btnBorrar.dataset.borrarClave;
+      statePedido.cantidades[clave] = 0;
+      document.querySelectorAll(`[data-clave-cantidad="${clave}"]`).forEach((el) => {
+        el.textContent = '0';
       });
       actualizarPedidoUI();
       return;
@@ -438,8 +452,9 @@ function initCarritoFlotante() {
   });
   if (vaciar) {
     vaciar.addEventListener('click', () => {
-      MENU.forEach((item) => { statePedido.cantidades[item.id] = 0; });
-      renderListasPedido();
+      Object.keys(statePedido.cantidades).forEach((clave) => { statePedido.cantidades[clave] = 0; });
+      document.querySelectorAll('[data-clave-cantidad]').forEach((el) => { el.textContent = '0'; });
+      actualizarPedidoUI();
     });
   }
 }
@@ -455,7 +470,7 @@ function initRuleta() {
   track.innerHTML = MENU.map(
     (item) => `
       <a href="#menu" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
-        <img src="${item.img}" alt="" width="160" height="160" loading="lazy">
+        <img src="${item.imgRuleta || item.img}" alt="" width="160" height="160" loading="lazy">
         <span>${item.nombre}</span>
       </a>`
   ).join('');
@@ -542,21 +557,20 @@ function initInstagram() {
    Contacto — datos + mapa condicional
    ============================================================ */
 function initContacto() {
-  const elDireccion = document.querySelector('#dato-direccion');
   const elHorario = document.querySelector('#dato-horario');
   const elDelivery = document.querySelector('#dato-delivery');
   const elPago = document.querySelector('#dato-pago');
   const elWhatsapp = document.querySelector('#dato-whatsapp');
   const elEmail = document.querySelector('#dato-email');
-  if (!elDireccion || !elHorario || !elDelivery || !elPago || !elWhatsapp || !elEmail) return;
+  if (!elHorario || !elDelivery || !elPago || !elWhatsapp || !elEmail) return;
 
-  elDireccion.textContent = CONFIG.contacto.direccion;
   elHorario.textContent = CONFIG.contacto.horario;
   elDelivery.textContent = CONFIG.contacto.zonaDelivery;
   elPago.textContent = CONFIG.contacto.metodosPago;
   elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
   elWhatsapp.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
   elEmail.textContent = CONFIG.contacto.email;
+  elEmail.setAttribute('href', `mailto:${CONFIG.contacto.email}`);
 }
 
 /* ============================================================
@@ -637,7 +651,6 @@ function initJsonLd() {
     servesCuisine: 'Lumpias, comida venezolana',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONFIG.contacto.direccion,
       addressLocality: 'Caracas',
       addressCountry: 'VE',
     },
@@ -757,7 +770,10 @@ function initLluviaLumpias() {
     img.alt = '';
     img.className = 'hero__lumpia-cayendo';
 
-    const tamano = 26 + Math.random() * 32;
+    // Mezcla de chicas y grandes en vez de un rango parejo: bias hacia los
+    // extremos (Math.random()**2) para que se note la diferencia de tamaño.
+    const chica = Math.random() < 0.5;
+    const tamano = chica ? 16 + Math.random() * 18 : 42 + Math.random() * 40;
     const izquierda = Math.random() * 96;
     const duracion = 2.6 + Math.random() * 2.2;
     const rotInicial = Math.random() * 360;
@@ -914,6 +930,8 @@ function initHumoLumpia3D() {
   return { iniciar, detener };
 }
 
+
+
 /* ============================================================
    Init general
    ============================================================ */
@@ -925,7 +943,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initLumpia3D();
   initRuleta();
   renderMenu();
-  initToggleTamano();
   initPedido();
   initCarritoFlotante();
   initGaleria();

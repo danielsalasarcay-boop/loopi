@@ -22,7 +22,7 @@
   --texto-sobre-rojo: #FFFFFF;
 
   /* Tipografía */
-  --font-heading: 'Baloo 2', 'Poppins', 'Arial Rounded MT Bold', sans-serif;
+  --font-heading: 'Bungee', 'Poppins', 'Arial Rounded MT Bold', sans-serif;
   --font-body: 'Poppins', 'Inter', system-ui, sans-serif;
 
   /* Espaciado */
@@ -357,8 +357,7 @@ body.no-scroll {
 /* Portada fija: .hero es un envoltorio alto (140svh) que le da al navegador
    "pista" de scroll extra; .hero__sticky se pega arriba (position:sticky) y
    se queda quieta en pantalla mientras ese sobrante se consume, hasta que se
-   acaba y la siguiente sección la tapa al subir. Mismo patrón que .lumpia3d
-   más abajo, aplicado acá a la portada en vez de al zoom del producto. */
+   acaba y la siguiente sección la tapa al subir. */
 .hero { position: relative; height: 140svh; }
 .hero__sticky {
   position: sticky;
@@ -647,25 +646,55 @@ body.no-scroll {
 }
 
 /* ==========================================================================
-   Barra de confianza
+   Mira de cerca — galería de 3 fotos con frase, reemplaza el zoom 3D.
    ========================================================================== */
-.trust-bar {
+.mira-cerca {
   background: var(--negro);
-  color: var(--crema);
-  padding-block: var(--space-sm);
-  overflow-x: auto;
+  padding-block: var(--space-lg);
 }
-.trust-bar__track {
+.mira-cerca__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 1100px;
+  margin-inline: auto;
+}
+.mira-cerca__item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-align: center;
+  gap: var(--space-md);
 }
-.trust-bar__dot { color: var(--naranja); }
+.mira-cerca__item figcaption { padding-inline: var(--space-md); }
+/* Zigzag: fila 1 y 3 con la foto pegada al margen izquierdo, fila 2 pegada
+   al margen derecho — la foto llega hasta el borde real de la sección. */
+.mira-cerca__item:nth-child(2) { flex-direction: row-reverse; }
+.mira-cerca__item:nth-child(2) figcaption { text-align: right; align-items: flex-end; }
+.mira-cerca__item img {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 460px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+.mira-cerca__item figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+  flex-shrink: 0;
+}
+.mira-cerca__linea {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  line-height: 1.05;
+  color: var(--crema);
+}
+.mira-cerca__linea--rojo { color: var(--rojo); }
+.mira-cerca__linea--naranja { color: var(--naranja); }
+.mira-cerca__linea--morado { color: var(--morado); }
 
 /* ==========================================================================
    Reveal genérico (IntersectionObserver)
@@ -696,6 +725,12 @@ body.no-scroll {
   text-align: center;
 }
 .ruleta .section-subtitle { margin-inline: auto; }
+.ruleta__kicker {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--rojo);
+  margin-top: var(--space-xs);
+}
 .ruleta__track-wrap {
   position: relative;
   max-width: var(--container-max);
@@ -760,39 +795,20 @@ body.no-scroll {
   .ruleta__arrow { display: flex; }
 }
 
+/* Separador entre "Explora los sabores" y "El menú" — naranja fosforescente
+   bien saturado, más vivo que el --naranja de marca a propósito, para que
+   lea como una franja llamativa y no se pierda entre las dos secciones
+   crema/naranja que tiene a los lados. */
+.franja-naranja { height: 14px; background: #ff5f00; }
+
 /* ==========================================================================
    Menú
    ========================================================================== */
-.menu { padding-top: var(--space-xl); }
+.menu { padding-top: 0; }
+.menu__head-banda { background: #ff5f00; padding-block: var(--space-lg); }
 .menu__head { text-align: center; padding-inline: var(--space-md); }
+.menu__head .section-title, .menu__head .section-subtitle { color: var(--negro); }
 .menu__head .section-subtitle { margin-inline: auto; }
-
-.size-toggle {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 100%;
-  background: rgba(17, 17, 17, 0.06);
-  padding: 6px;
-  border-radius: var(--radius-pill);
-  gap: 4px;
-}
-.size-toggle__btn {
-  padding: 0.7rem 1.6rem;
-  border-radius: var(--radius-pill);
-  font-weight: 700;
-  color: var(--texto-oscuro);
-  white-space: nowrap;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-@media (max-width: 360px) {
-  .size-toggle__btn { padding: 0.65rem 1.1rem; font-size: 0.92rem; }
-}
-.size-toggle__btn.is-active {
-  background: var(--rojo);
-  color: var(--crema);
-  box-shadow: var(--shadow-rojo);
-}
 
 .menu__block { padding-block: var(--space-lg); }
 .menu__block--salados { background: var(--naranja); }
@@ -802,10 +818,10 @@ body.no-scroll {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   margin-bottom: var(--space-md);
 }
-.menu__block-title--light { color: var(--crema); }
+.menu__block-title--light { color: var(--negro); }
 
 /* 2 columnas desde mobile (antes 1) para que el menú no se estire en una
    sola torre larguísima de tarjetas — página más corta y fácil de recorrer. */
@@ -835,8 +851,15 @@ body.no-scroll {
    bordes izquierdo/derecho, y en los placeholders eso corta el texto. Las
    2 columnas desde mobile ya acortan la sección por su cuenta, sin
    necesidad de recortar la imagen también. */
-.card__img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
-.card__body { padding: var(--space-sm); display: flex; flex-direction: column; gap: 0.3rem; }
+.card__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.card__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
 .card__title {
   font-family: var(--font-heading);
   font-weight: 800;
@@ -844,13 +867,59 @@ body.no-scroll {
   font-size: 1rem;
   color: var(--negro);
 }
-.card__desc { color: var(--texto-muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
-.card .btn--whatsapp { padding: 0.65rem 1rem; font-size: 0.85rem; }
+.card__unidades {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--crema);
+  background: var(--rojo);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.card__desc { color: var(--texto-muted); font-size: 0.78rem; margin-bottom: 0.1rem; line-height: 1.25; }
+.card__tamanos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.1rem;
+}
+.card__tamano-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid rgba(17, 17, 17, 0.08);
+}
+.card__tamano-row:first-child { border-top: none; padding-top: 0; }
+.card__tamano-label { flex: 1; font-size: 0.85rem; color: var(--texto-muted); }
+.card__tamano-label strong { font-family: var(--font-heading); color: var(--negro); margin-left: 0.3rem; }
+.card__borrar {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--negro);
+  border-radius: 50%;
+  transition: background var(--transition-fast);
+}
+.card__borrar:hover { background: rgba(17, 17, 17, 0.08); }
+.card__borrar svg { width: 14px; height: 14px; }
+.card__stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
 @media (min-width: 720px) {
-  .card__body { padding: var(--space-md); gap: 0.4rem; }
+  .card__body { padding: 0.85rem; gap: 0.2rem; }
   .card__title { font-size: 1.15rem; }
-  .card__desc { font-size: 0.95rem; margin-bottom: 0.4rem; }
-  .card .btn--whatsapp { padding: 0.9rem 1.8rem; font-size: 1rem; }
+  .card__desc { font-size: 0.88rem; margin-bottom: 0.15rem; }
+  .card__tamano-label { font-size: 0.95rem; }
 }
 .card__badge {
   position: absolute;
@@ -891,33 +960,31 @@ body.no-scroll {
   gap: var(--space-sm);
   margin-bottom: var(--space-md);
 }
-.config-row {
+.configurador__vacio { color: rgba(17, 17, 17, 0.6); font-size: 0.95rem; margin-bottom: var(--space-md); }
+.carrito-linea {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-sm);
   padding-bottom: var(--space-sm);
   border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+  font-size: 0.95rem;
 }
-.config-row:last-child { border-bottom: none; padding-bottom: 0; }
-.config-row__img { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
-.config-row__info { flex: 1; min-width: 120px; }
-.config-row__nombre { font-weight: 700; font-size: 0.98rem; }
-.config-row__stepper {
+.carrito-linea:last-child { border-bottom: none; padding-bottom: 0; }
+.carrito-linea__desc { flex: 1; }
+.carrito-linea__precio { font-family: var(--font-heading); color: var(--rojo); flex-shrink: 0; }
+.carrito-linea__borrar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.7rem;
-  margin-left: auto;
+  justify-content: center;
+  color: var(--negro);
+  border-radius: 50%;
+  transition: background var(--transition-fast);
 }
-/* Pantallas angostas: el nombre del sabor necesita más ancho que el
-   disponible junto a la foto y el stepper, así que el stepper baja a su
-   propia línea en vez de comprimirse. Umbral subido de 380 a 440px porque
-   el stepper ahora es más grande en pantallas táctiles (ver @media
-   (pointer: coarse) más abajo). */
-@media (max-width: 440px) {
-  .config-row__stepper { flex-basis: 100%; justify-content: flex-start; margin-left: 72px; }
-}
+.carrito-linea__borrar:hover { background: rgba(17, 17, 17, 0.08); }
+.carrito-linea__borrar svg { width: 16px; height: 16px; }
 .stepper__btn {
   width: 34px;
   height: 34px;
@@ -950,9 +1017,11 @@ body.no-scroll {
 .configurador__totales {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-size: 0.95rem;
 }
 .configurador__totales strong { font-family: var(--font-heading); font-size: 1.1rem; color: var(--rojo); }
+.configurador__total-precio { font-family: var(--font-heading); font-weight: 800; font-size: 1.3rem; color: var(--rojo); }
 
 /* ==========================================================================
    Cómo pedir
@@ -962,7 +1031,8 @@ body.no-scroll {
 /* ==========================================================================
    Tips para recalentar (reutiliza .pasos / .paso de Cómo pedir)
    ========================================================================== */
-.tips { padding-block: var(--space-2xl); background: var(--negro); color: var(--crema); text-align: center; }
+.tips { padding-block: var(--space-2xl); background: var(--rojo); color: var(--crema); text-align: center; }
+.tips .section-title, .tips .paso h3 { color: var(--negro); }
 .tips .section-subtitle { color: rgba(255, 248, 238, 0.85); margin-inline: auto; }
 .tips .paso p { color: rgba(255, 248, 238, 0.85); }
 .pasos {
@@ -994,6 +1064,7 @@ body.no-scroll {
 .paso__icono--rojo { background: var(--rojo); box-shadow: var(--shadow-rojo); }
 .paso__icono--naranja { background: var(--naranja); color: var(--negro); }
 .paso__icono--morado { background: var(--morado); box-shadow: var(--shadow-morado); }
+.paso__icono--azul { background: #4FC3F7; color: var(--negro); }
 
 /* ==========================================================================
    Galería + lightbox
@@ -1135,12 +1206,29 @@ body.no-scroll {
   gap: var(--space-md);
   text-align: center;
 }
-.footer__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-weight: 500; }
+.footer__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; font-size: 0.85rem; }
 .footer__nav a:hover { color: var(--naranja); }
+/* Distinto a los botones flotantes fijos (círculo sólido de color): acá va
+   un sticker tipo street — fondo negro, borde grueso de color, ícono en
+   ese mismo color, ligera rotación como si fuera un parche pegado. */
 .footer__social { display: flex; gap: var(--space-md); }
-.footer__social a { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-.footer__social svg { width: 24px; height: 24px; }
-.footer__social a:hover { color: var(--naranja); }
+.footer__social a {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--negro);
+  border: 2px solid currentColor;
+  transform: rotate(-4deg);
+  transition: transform var(--transition-fast);
+}
+.footer__social svg { width: 20px; height: 20px; }
+.footer__social a:hover { transform: rotate(0deg) scale(1.08); }
+.footer__social a[data-wa-generico] { color: #25D366; }
+.footer__social a[data-ig-link] { color: var(--naranja); border-color: #FF2EC4; transform: rotate(4deg); }
+.footer__social a[data-ig-link]:hover { transform: rotate(0deg) scale(1.08); }
 .footer__datos { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-size: 0.95rem; opacity: 0.85; }
 .footer__copy { font-size: 0.85rem; opacity: 0.6; }
 
@@ -1256,9 +1344,6 @@ body.no-scroll {
   min-height: 0;
 }
 
-.carrito-panel__size-toggle { padding: var(--space-sm) var(--space-md) 0; display: flex; justify-content: center; flex-shrink: 0; }
-.carrito-panel__size-toggle .size-toggle { width: 100%; justify-content: center; }
-
 .carrito-panel__lista {
   flex: 1;
   overflow-y: auto;
@@ -1324,8 +1409,8 @@ body.no-scroll {
   --pulse-color: 37, 211, 102;
 }
 .floating-btn--instagram {
-  background: radial-gradient(circle at 30% 30%, #E1306C 0%, #C13584 45%, #833AB4 100%);
-  --pulse-color: 193, 53, 132;
+  background: radial-gradient(circle at 30% 30%, var(--naranja) 0%, var(--rojo) 45%, var(--morado) 100%);
+  --pulse-color: 172, 0, 177;
 }
 
 @keyframes pulse {

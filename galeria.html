@@ -32,9 +32,9 @@
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./styles.css?v=24">
 </head>
 <body class="header--forzar-solido">
 
@@ -65,8 +65,8 @@
         <a href="./index.html#contacto">Contacto</a>
       </nav>
 
-      <a class="btn btn--primary header__cta" data-wa-generico target="_blank" rel="noopener" href="#">
-        Pedir por WhatsApp
+      <a class="btn btn--primary header__cta" href="./index.html#arma-tu-pedido">
+        Arma tu pedido
       </a>
 
       <button class="header__hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav">
@@ -87,7 +87,7 @@
       <a href="./index.html#como-pedir">Cómo pedir</a>
       <a href="./galeria.html" aria-current="page">Galería</a>
       <a href="./index.html#contacto">Contacto</a>
-      <a class="btn btn--primary" data-wa-generico target="_blank" rel="noopener" href="#">Pedir por WhatsApp</a>
+      <a class="btn btn--primary" href="./index.html#arma-tu-pedido">Arma tu pedido</a>
     </nav>
   </div>
 
@@ -152,7 +152,8 @@
     <div class="container footer__inner">
       <nav class="footer__nav" aria-label="Navegación de pie de página">
         <a href="./index.html#menu">Menú</a>
-        <a href="./index.html#como-pedir">Cómo pedir</a>
+        <a href="./galeria.html" aria-current="page">Galería</a>
+        <a href="./index.html#arma-tu-pedido">Arma tu pedido</a>
         <a href="./index.html#contacto">Contacto</a>
       </nav>
 
@@ -198,18 +199,12 @@
     <p data-pedido-vacio class="carrito-panel__vacio">Tu pedido está vacío. Agrega sabores desde el menú.</p>
 
     <div data-pedido-contenido hidden>
-      <div class="carrito-panel__size-toggle">
-        <div class="size-toggle" role="group" aria-label="Tamaño de la cajita">
-          <button type="button" class="size-toggle__btn is-active" data-pedido-size-btn data-tamano="12" aria-pressed="true">Cajita de 12</button>
-          <button type="button" class="size-toggle__btn" data-pedido-size-btn data-tamano="24" aria-pressed="false">Cajita de 24</button>
-        </div>
-      </div>
-
-      <div data-pedido-lista class="carrito-panel__lista"></div>
+      <div data-carrito-lista class="carrito-panel__lista"></div>
 
       <div class="carrito-panel__footer">
         <div class="configurador__totales">
-          <span><strong data-pedido-unidades>0</strong> cajitas</span>
+          <span><strong data-pedido-unidades>0</strong> unidades</span>
+          <span class="configurador__total-precio" data-pedido-total>$0</span>
         </div>
         <a data-pedido-whatsapp class="btn btn--whatsapp btn--full is-disabled" aria-disabled="true" target="_blank" rel="noopener" href="#">
           <span>Enviar pedido por WhatsApp</span>
@@ -229,6 +224,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=3"></script>
+  <script src="./main.js?v=24"></script>
 </body>
 </html>

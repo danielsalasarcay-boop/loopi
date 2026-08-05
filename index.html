@@ -32,9 +32,9 @@
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./styles.css?v=24">
 </head>
 <body>
 
@@ -65,8 +65,8 @@
         <a href="#contacto">Contacto</a>
       </nav>
 
-      <a class="btn btn--primary header__cta" data-wa-generico target="_blank" rel="noopener" href="#">
-        Pedir por WhatsApp
+      <a class="btn btn--primary header__cta" href="#arma-tu-pedido">
+        Arma tu pedido
       </a>
 
       <button class="header__hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav">
@@ -87,7 +87,7 @@
       <a href="#como-pedir">Cómo pedir</a>
       <a href="./galeria.html">Galería</a>
       <a href="#contacto">Contacto</a>
-      <a class="btn btn--primary" data-wa-generico target="_blank" rel="noopener" href="#">Pedir por WhatsApp</a>
+      <a class="btn btn--primary" href="#arma-tu-pedido">Arma tu pedido</a>
     </nav>
   </div>
 
@@ -111,8 +111,8 @@
             </h1>
             <p class="hero__slogan" id="hero-slogan">Golden. Crispy. Premium.</p>
             <div class="hero__ctas">
-              <a class="btn btn--light" data-wa-generico target="_blank" rel="noopener" href="#">Pedir ahora</a>
-              <a class="btn btn--outline-light" href="#menu">Ver el menú</a>
+              <a class="btn btn--light" href="#arma-tu-pedido">Haz tu pedido</a>
+              <a class="btn btn--outline-light" href="#menu">Menú</a>
             </div>
           </div>
         </div>
@@ -134,16 +134,21 @@
       </div>
     </section>
 
-    <!-- ============ BARRA DE CONFIANZA ============ -->
-    <section class="trust-bar" aria-label="Beneficios de pedir en loopi">
-      <div class="trust-bar__track container">
-        <span>Hechas el mismo día</span>
-        <span class="trust-bar__dot">·</span>
-        <span>Delivery en Caracas</span>
-        <span class="trust-bar__dot">·</span>
-        <span>Cajitas de 12 y 24</span>
-        <span class="trust-bar__dot">·</span>
-        <span>Pago móvil / Zelle</span>
+    <!-- ============ MIRA DE CERCA — GALERÍA ============ -->
+    <section class="mira-cerca" id="mira-de-cerca" aria-label="Mira de cerca nuestras mini lumpias">
+      <div class="mira-cerca__grid">
+        <figure class="mira-cerca__item" data-reveal>
+          <img src="./img/galeria/galeria-08-torre.webp" alt="Mini lumpias loopi apiladas, doradas y crocantes" width="320" height="240" loading="lazy">
+          <figcaption><span class="mira-cerca__linea">Best</span><span class="mira-cerca__linea mira-cerca__linea--naranja">Lumpias</span><span class="mira-cerca__linea mira-cerca__linea--morado">in Town</span></figcaption>
+        </figure>
+        <figure class="mira-cerca__item" data-reveal>
+          <img src="./img/galeria/galeria-03-salsa.webp" alt="Mini lumpia loopi siendo mojada en salsa, ambiente cálido" width="320" height="240" loading="lazy">
+          <figcaption><span class="mira-cerca__linea">Eleva tu evento</span><span class="mira-cerca__linea mira-cerca__linea--rojo">con la experiencia</span><span class="mira-cerca__linea mira-cerca__linea--naranja">Loopi</span></figcaption>
+        </figure>
+        <figure class="mira-cerca__item" data-reveal>
+          <img src="./img/galeria/galeria-06-friendo.webp" alt="Mini lumpias loopi friéndose hasta quedar doradas" width="320" height="240" loading="lazy">
+          <figcaption><span class="mira-cerca__linea">Una explosión</span><span class="mira-cerca__linea mira-cerca__linea--morado">de</span><span class="mira-cerca__linea mira-cerca__linea--naranja">sabores</span></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -152,6 +157,7 @@
       <div class="container">
         <h2 class="section-title" data-reveal>Explora los sabores</h2>
         <p class="section-subtitle" data-reveal>Deslizá para ver todo lo que tenemos — tocá uno para ir directo al menú.</p>
+        <p class="ruleta__kicker" data-reveal>¡Desliza para conocerlos!</p>
       </div>
       <div class="ruleta__track-wrap" data-reveal>
         <button type="button" class="ruleta__arrow ruleta__arrow--prev" aria-label="Sabor anterior">
@@ -164,15 +170,15 @@
       </div>
     </section>
 
+    <div class="franja-naranja" aria-hidden="true"></div>
+
     <!-- ============ MENÚ ============ -->
     <section class="menu" id="menu">
-      <div class="container">
-        <div class="menu__head" data-reveal>
-          <h2 class="section-title">El menú</h2>
-          <p class="section-subtitle">Elige el tamaño de tu cajita, todos los sabores están disponibles en ambas.</p>
-          <div class="size-toggle" role="group" aria-label="Tamaño de la cajita">
-            <button type="button" class="size-toggle__btn is-active" data-tamano="12" aria-pressed="true">Cajita de 12</button>
-            <button type="button" class="size-toggle__btn" data-tamano="24" aria-pressed="false">Cajita de 24</button>
+      <div class="menu__head-banda">
+        <div class="container">
+          <div class="menu__head" data-reveal>
+            <h2 class="section-title">El menú</h2>
+            <p class="section-subtitle">Elige el tamaño de tu empaque</p>
           </div>
         </div>
       </div>
@@ -197,19 +203,17 @@
       <div class="container">
         <div class="configurador__head" data-reveal>
           <h2 class="section-title">Arma tu pedido</h2>
-          <p class="section-subtitle">Suma las cajitas que quieras de cada sabor y te generamos el mensaje listo para WhatsApp.</p>
-          <div class="size-toggle config-size-toggle" role="group" aria-label="Tamaño de la cajita para tu pedido">
-            <button type="button" class="size-toggle__btn is-active" data-pedido-size-btn data-tamano="12" aria-pressed="true">Cajita de 12</button>
-            <button type="button" class="size-toggle__btn" data-pedido-size-btn data-tamano="24" aria-pressed="false">Cajita de 24</button>
-          </div>
+          <p class="section-subtitle">Escoge tus loopis favoritas y te atendemos por WhatsApp.</p>
         </div>
 
         <div class="configurador__box" data-reveal>
-          <div data-pedido-lista class="configurador__lista"></div>
+          <div data-carrito-lista class="configurador__lista"></div>
+          <p data-pedido-vacio class="configurador__vacio">Elige tus sabores desde el menú de arriba — cada tarjeta tiene su propio contador.</p>
 
           <div class="configurador__resumen">
             <div class="configurador__totales">
-              <span><strong data-pedido-unidades>0</strong> cajitas</span>
+              <span><strong data-pedido-unidades>0</strong> unidades</span>
+              <span class="configurador__total-precio" data-pedido-total>$0</span>
             </div>
             <a data-pedido-whatsapp class="btn btn--whatsapp btn--full is-disabled" aria-disabled="true" target="_blank" rel="noopener" href="#">
               <span>Enviar pedido por WhatsApp</span>
@@ -228,53 +232,53 @@
             <span class="paso__icono paso__icono--rojo" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
             </span>
-            <h3>1. Elige tus lumpias</h3>
-            <p>Escoge tus sabores favoritos y el tamaño de cajita que prefieras.</p>
+            <h3>1. Elige tus Loopi</h3>
+            <p>Escoge tus sabores favoritos y el tamaño de empaque que prefieras.</p>
           </li>
           <li class="paso" data-reveal>
             <span class="paso__icono paso__icono--naranja" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg>
             </span>
             <h3>2. Escríbenos por WhatsApp</h3>
-            <p>Tu pedido llega listo, solo confirmamos disponibilidad y forma de pago.</p>
+            <p>Confirma disponibilidad y forma de pago.</p>
           </li>
           <li class="paso" data-reveal>
             <span class="paso__icono paso__icono--morado" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1-3h11l1 3M3 7h13m-13 0v9a1 1 0 0 0 1 1h1m11-10v10h-8m8-10 4 4v6h-4M6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
             </span>
-            <h3>3. Llegan congeladas a tu puerta</h3>
-            <p>Directo del freezer a tu casa — las fríes tú y quedan igual de crunchy.</p>
+            <h3>3. Recibe tu pedido</h3>
+            <p>Directo al congelador, hasta que decidas vivir la experiencia Loopi.</p>
           </li>
         </ol>
       </div>
     </section>
 
-    <!-- ============ TIPS PARA DISFRUTARLAS ============ -->
+    <!-- ============ TIPS PARA COCINARLAS ============ -->
     <section class="tips" id="tips">
       <div class="container">
-        <h2 class="section-title" data-reveal>Tips para que sigan crunchy</h2>
-        <p class="section-subtitle" data-reveal>Si te sobran (raro, pero pasa), así se recalientan bien.</p>
+        <h2 class="section-title" data-reveal>Tips para cocinarlas</h2>
+        <p class="section-subtitle" data-reveal>Así quedan doradas y crocantes, directo del freezer.</p>
         <ol class="pasos">
           <li class="paso" data-reveal>
             <span class="paso__icono paso__icono--naranja" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M6 19V9a6 6 0 0 1 12 0v10M9 19v-4a3 3 0 0 1 6 0v4"/></svg>
             </span>
-            <h3>Horno o air-fryer</h3>
-            <p>180°C por 5 minutos y quedan como recién salidas. Ese es el secreto.</p>
+            <h3>Horno o Airfryer</h3>
+            <p>6 minutos por cada lado a 180°C. Ese es el secreto.</p>
           </li>
           <li class="paso" data-reveal>
-            <span class="paso__icono paso__icono--rojo" aria-hidden="true">
+            <span class="paso__icono paso__icono--naranja" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 4.5 2 7a5 5 0 0 0 10 0c0-2.5 2-4 2-7a7 7 0 0 0-7-7ZM4 4l16 16"/></svg>
             </span>
-            <h3>Microondas jamás</h3>
-            <p>Las deja blandas y tristes. No es lo mismo, créenos.</p>
+            <h3>Freírlas congeladas</h3>
+            <p>Calienta el aceite a 180°C y fríelas hasta que doren.</p>
           </li>
           <li class="paso" data-reveal>
-            <span class="paso__icono paso__icono--morado" aria-hidden="true">
+            <span class="paso__icono paso__icono--azul" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12h20M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></svg>
             </span>
-            <h3>Nevera hasta 3 días</h3>
-            <p>En un envase bien cerrado. Si es que llegan a durar tanto.</p>
+            <h3>Congelación</h3>
+            <p>Mantén el empaque bien cerrado, para que duren más.</p>
           </li>
         </ol>
       </div>
@@ -292,7 +296,7 @@
             </div>
             <div>
               <dt>Correo</dt>
-              <dd id="dato-email"></dd>
+              <dd><a id="dato-email" href="#"></a></dd>
             </div>
             <div>
               <dt>Horario</dt>
@@ -306,10 +310,6 @@
               <dt>Métodos de pago</dt>
               <dd id="dato-pago"></dd>
             </div>
-            <div>
-              <dt>Dirección</dt>
-              <dd id="dato-direccion"></dd>
-            </div>
           </dl>
         </div>
       </div>
@@ -322,7 +322,8 @@
     <div class="container footer__inner">
       <nav class="footer__nav" aria-label="Navegación de pie de página">
         <a href="#menu">Menú</a>
-        <a href="#como-pedir">Cómo pedir</a>
+        <a href="./galeria.html">Galería</a>
+        <a href="#arma-tu-pedido">Arma tu pedido</a>
         <a href="#contacto">Contacto</a>
       </nav>
 
@@ -368,18 +369,12 @@
     <p data-pedido-vacio class="carrito-panel__vacio">Tu pedido está vacío. Agrega sabores desde el menú.</p>
 
     <div data-pedido-contenido hidden>
-      <div class="carrito-panel__size-toggle">
-        <div class="size-toggle" role="group" aria-label="Tamaño de la cajita">
-          <button type="button" class="size-toggle__btn is-active" data-pedido-size-btn data-tamano="12" aria-pressed="true">Cajita de 12</button>
-          <button type="button" class="size-toggle__btn" data-pedido-size-btn data-tamano="24" aria-pressed="false">Cajita de 24</button>
-        </div>
-      </div>
-
-      <div data-pedido-lista class="carrito-panel__lista"></div>
+      <div data-carrito-lista class="carrito-panel__lista"></div>
 
       <div class="carrito-panel__footer">
         <div class="configurador__totales">
-          <span><strong data-pedido-unidades>0</strong> cajitas</span>
+          <span><strong data-pedido-unidades>0</strong> unidades</span>
+          <span class="configurador__total-precio" data-pedido-total>$0</span>
         </div>
         <a data-pedido-whatsapp class="btn btn--whatsapp btn--full is-disabled" aria-disabled="true" target="_blank" rel="noopener" href="#">
           <span>Enviar pedido por WhatsApp</span>
@@ -399,6 +394,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=3"></script>
+  <script src="./main.js?v=24"></script>
 </body>
 </html>
