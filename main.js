@@ -56,6 +56,7 @@ const MENU = [
     categoria: 'salado',
     descripcion: 'Cremosa, con tocineta y queso pecorino.',
     img: './img/productos/carbonara.webp',
+    imgRuleta: './img/sabores/carbonara.webp',
     badge: 'La más pedida',
   },
   {
@@ -91,6 +92,7 @@ const MENU = [
     categoria: 'postre',
     descripcion: 'Caramelo salado, dulce con carácter.',
     img: './img/productos/salted-caramel.webp',
+    imgRuleta: './img/sabores/salted-caramel.webp',
     badge: 'La explosiva',
   },
   {
@@ -99,6 +101,7 @@ const MENU = [
     categoria: 'postre',
     descripcion: 'Nutella es nutella.',
     img: './img/productos/nutella.webp',
+    imgRuleta: './img/sabores/nutella.webp',
     badge: 'La tentación',
   },
 ];
