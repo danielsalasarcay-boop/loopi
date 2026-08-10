@@ -1165,11 +1165,52 @@ body.no-scroll {
    Contacto
    ========================================================================== */
 .contacto { padding-block: var(--space-2xl); background: var(--rojo); color: var(--crema); }
-.contacto .section-title { color: var(--crema); }
-.contacto__info { max-width: 480px; margin-inline: auto; }
-.contacto__lista { display: grid; gap: var(--space-sm); }
-.contacto__lista dt { font-weight: 700; color: #FFD400; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
-.contacto__lista dd { font-size: 1rem; color: var(--crema); }
+.contacto .section-title { color: var(--crema); text-align: center; }
+.contacto__info { max-width: 560px; margin-inline: auto; }
+
+/* Casillas tipo tarjeta/botón (sin acción real salvo WhatsApp y Correo) —
+   grid de 2 columnas para que la sección quede corta en teléfono en vez
+   de una lista larga apilada. */
+.contacto__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+.contacto__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: left;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+a.contacto__tile:hover, a.contacto__tile:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+.contacto__tile--full { grid-column: 1 / -1; }
+.contacto__tile-icon {
+  width: 22px;
+  height: 22px;
+  color: #FFD400;
+}
+.contacto__tile-label {
+  font-weight: 700;
+  color: #FFD400;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.contacto__tile-valor {
+  font-size: 0.92rem;
+  line-height: 1.3;
+  color: var(--crema);
+  word-break: break-word;
+}
 
 /* ==========================================================================
    Footer

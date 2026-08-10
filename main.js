@@ -564,9 +564,9 @@ function initContacto() {
   elDelivery.textContent = CONFIG.contacto.zonaDelivery;
   elPago.textContent = CONFIG.contacto.metodosPago;
   elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
-  elWhatsapp.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
+  document.querySelector('[data-whatsapp-link]')?.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
   elEmail.textContent = CONFIG.contacto.email;
-  elEmail.setAttribute('href', `mailto:${CONFIG.contacto.email}`);
+  document.querySelector('[data-email-link]')?.setAttribute('href', `mailto:${CONFIG.contacto.email}`);
 }
 
 /* ============================================================
