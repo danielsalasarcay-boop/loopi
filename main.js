@@ -141,7 +141,7 @@ function mensajeGenerico() {
 // y el total, para que el pedido llegue completo por WhatsApp.
 function mensajePedido(items) {
   const lineas = items
-    .map((i) => `• ${i.cantidad}x Bolsita de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
+    .map((i) => `• ${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
     .join('\n');
   const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
   return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\nTotal: $${total}\n\n¿Me confirman disponibilidad, forma de pago y costo del delivery?`;
@@ -225,12 +225,12 @@ function renderFilaTamano(item, tamano) {
   const cantidad = statePedido.cantidades[clave] || 0;
   return `
     <div class="card__tamano-row">
-      <span class="card__tamano-label">Bolsita ${tamano} <strong>$${PRECIOS[tamano]}</strong></span>
-      <button type="button" class="card__borrar" data-borrar-clave="${clave}" aria-label="Quitar bolsitas de ${tamano} de ${item.nombre}" ${cantidad === 0 ? 'hidden' : ''}>${ICONS.trash}</button>
+      <span class="card__tamano-label">Empaque de ${tamano} <strong>$${PRECIOS[tamano]}</strong></span>
+      <button type="button" class="card__borrar" data-borrar-clave="${clave}" aria-label="Quitar empaque de ${tamano} de ${item.nombre}" ${cantidad === 0 ? 'hidden' : ''}>${ICONS.trash}</button>
       <div class="stepper card__stepper">
-        <button type="button" class="stepper__btn" data-accion="mas" data-clave="${clave}" aria-label="Agregar una bolsita de ${tamano} de ${item.nombre}">${ICONS.plus}</button>
+        <button type="button" class="stepper__btn" data-accion="mas" data-clave="${clave}" aria-label="Agregar un empaque de ${tamano} de ${item.nombre}">${ICONS.plus}</button>
         <span class="stepper__cantidad" data-clave-cantidad="${clave}">${cantidad}</span>
-        <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar una bolsita de ${tamano} de ${item.nombre}">${ICONS.minus}</button>
+        <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar un empaque de ${tamano} de ${item.nombre}">${ICONS.minus}</button>
       </div>
     </div>`;
 }
@@ -318,7 +318,7 @@ function itemsDelPedido() {
 function renderLineaCarrito(i) {
   return `
     <div class="carrito-linea">
-      <span class="carrito-linea__desc">${i.cantidad}x Bolsita de ${i.tamano} — ${i.nombre}</span>
+      <span class="carrito-linea__desc">${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre}</span>
       <strong class="carrito-linea__precio">$${i.cantidad * i.precioUnit}</strong>
       <button type="button" class="carrito-linea__borrar" data-borrar-clave="${i.clave}" aria-label="Quitar ${i.nombre} de ${i.tamano} del pedido">${ICONS.trash}</button>
     </div>`;
