@@ -860,12 +860,6 @@ body.no-scroll {
   .ruleta__arrow { display: flex; }
 }
 
-/* Separador entre "Explora los sabores" y "Productos" — naranja fosforescente
-   bien saturado, más vivo que el --naranja de marca a propósito, para que
-   lea como una franja llamativa y no se pierda entre las dos secciones
-   crema/naranja que tiene a los lados. */
-.franja-naranja { height: 14px; background: #ff5f00; }
-
 /* ==========================================================================
    Menú
    ========================================================================== */
@@ -876,8 +870,7 @@ body.no-scroll {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 1rem;
+  font-size: 1.9rem;
   color: var(--negro);
   margin-bottom: var(--space-xs);
 }
@@ -1516,4 +1509,18 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   .paso__icono svg { width: 26px; height: 26px; }
   .mira-cerca { padding-block: var(--space-md); }
   .hero__slogan { margin-bottom: var(--space-md); }
+
+  /* Tips y Contacto son las dos secciones más "pesadas" de la página en
+     teléfono (pasos/casillas apiladas) — mismo padding-block reducido
+     para que se sientan igual de cortas la una que la otra. */
+  .tips, .contacto { padding-block: var(--space-lg); }
+  .contacto .section-title { margin-bottom: var(--space-sm); }
+  .contacto__grid { gap: 0.5rem; }
+  .contacto__tile {
+    padding: 0.6rem 0.7rem;
+    gap: 0.2rem;
+  }
+  .contacto__tile-icon { width: 18px; height: 18px; }
+  .contacto__tile-label { font-size: 0.66rem; }
+  .contacto__tile-valor { font-size: 0.85rem; }
 }
