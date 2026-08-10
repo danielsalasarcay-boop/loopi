@@ -870,10 +870,17 @@ body.no-scroll {
    Menú
    ========================================================================== */
 .menu { padding-top: 0; }
-.menu__head-banda { background: #ff5f00; padding-block: var(--space-lg); }
-.menu__head { text-align: center; padding-inline: var(--space-md); }
-.menu__head .section-title, .menu__head .section-subtitle { color: var(--negro); }
-.menu__head .section-subtitle { margin-inline: auto; }
+
+.menu__eyebrow {
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1rem;
+  color: var(--negro);
+  margin-bottom: var(--space-xs);
+}
 
 .menu__block { padding-block: var(--space-lg); }
 .menu__block--salados { background: var(--naranja); }
@@ -1503,7 +1510,6 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
     --space-xl: 2.5rem;
     --space-2xl: 3.5rem;
   }
-  .menu__head-banda { padding-block: var(--space-md); }
   .menu__block { padding-block: var(--space-md); }
   .pasos { gap: var(--space-md); }
   .paso__icono { width: 56px; height: 56px; }
