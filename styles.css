@@ -301,6 +301,36 @@ body.no-scroll {
 
 .header__cta { display: none; }
 
+.header__carrito-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--crema);
+  transition: color var(--transition-med);
+}
+.header--scrolled .header__carrito-btn { color: var(--negro); }
+.header__carrito-btn svg { width: 23px; height: 23px; }
+.header__carrito-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 3px;
+  border-radius: 999px;
+  background: var(--naranja);
+  color: var(--negro);
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .header__hamburger {
   display: flex;
   align-items: center;
@@ -1254,6 +1284,10 @@ body.no-scroll {
   color: var(--crema);
   font-size: 0.75rem;
   font-weight: 800;
+}
+.carrito-btn__badge[hidden],
+.header__carrito-badge[hidden] {
+  display: none;
 }
 
 .carrito-panel {

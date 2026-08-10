@@ -412,18 +412,18 @@ function initPedido() {
    botones de WhatsApp/Instagram).
    ============================================================ */
 function initCarritoFlotante() {
-  const btn = document.querySelector('#carrito-btn');
+  const btns = document.querySelectorAll('[data-carrito-abrir]');
   const panel = document.querySelector('#carrito-panel');
   const backdrop = document.querySelector('#carrito-backdrop');
   const cerrar = document.querySelector('#carrito-cerrar');
   const vaciar = document.querySelector('#carrito-vaciar');
-  if (!btn || !panel || !backdrop) return;
+  if (!btns.length || !panel || !backdrop) return;
 
   const abrirPanel = () => {
     panel.classList.add('is-open');
     backdrop.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
-    btn.setAttribute('aria-expanded', 'true');
+    btns.forEach((b) => b.setAttribute('aria-expanded', 'true'));
     bloquearScroll();
     if (cerrar) cerrar.focus();
   };
@@ -431,13 +431,15 @@ function initCarritoFlotante() {
     panel.classList.remove('is-open');
     backdrop.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
-    btn.setAttribute('aria-expanded', 'false');
+    btns.forEach((b) => b.setAttribute('aria-expanded', 'false'));
     desbloquearScroll();
-    btn.focus();
+    btns[0].focus();
   };
 
-  btn.addEventListener('click', () => {
-    panel.classList.contains('is-open') ? cerrarPanel() : abrirPanel();
+  btns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      panel.classList.contains('is-open') ? cerrarPanel() : abrirPanel();
+    });
   });
   if (cerrar) cerrar.addEventListener('click', cerrarPanel);
   backdrop.addEventListener('click', cerrarPanel);
