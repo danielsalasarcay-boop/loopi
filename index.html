@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=29">
+  <link rel="stylesheet" href="./styles.css?v=30">
 </head>
 <body>
 
@@ -62,17 +62,10 @@
         <a href="#productos">Productos</a>
         <a href="./galeria.html">Galería</a>
         <a href="#contacto">Contacto</a>
+        <button type="button" data-carrito-abrir aria-label="Ver mi pedido" aria-expanded="false" aria-controls="carrito-panel">
+          Pedido<span data-pedido-badge class="header__nav-badge" hidden>0</span>
+        </button>
       </nav>
-
-      <button type="button" class="header__carrito-btn" data-carrito-abrir aria-label="Ver mi pedido" aria-expanded="false" aria-controls="carrito-panel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M6 6h15l-1.5 9h-12z"/>
-          <path d="M6 6L5 3H3"/>
-          <circle cx="9" cy="20" r="1.4"/>
-          <circle cx="18" cy="20" r="1.4"/>
-        </svg>
-        <span data-pedido-badge class="header__carrito-badge" hidden>0</span>
-      </button>
 
       <button class="header__hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav">
         <span class="header__hamburger-icon">
@@ -91,6 +84,9 @@
       <a href="#productos">Productos</a>
       <a href="./galeria.html">Galería</a>
       <a href="#contacto">Contacto</a>
+      <button type="button" data-carrito-abrir aria-label="Ver mi pedido" aria-expanded="false" aria-controls="carrito-panel">
+        Pedido<span data-pedido-badge class="mobile-nav__badge" hidden>0</span>
+      </button>
     </nav>
   </div>
 
@@ -335,6 +331,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=29"></script>
+  <script src="./main.js?v=30"></script>
 </body>
 </html>

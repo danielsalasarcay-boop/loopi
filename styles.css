@@ -293,43 +293,40 @@ body.no-scroll {
   transition: color var(--transition-med);
 }
 .header--scrolled .header__nav { color: var(--negro); }
-.header__nav a { position: relative; padding-block: 4px; }
+.header__nav a, .header__nav button {
+  position: relative;
+  padding-block: 4px;
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 /* Estado transparente (sobre el hero rojo): subrayado en hover, no cambio de color,
    para no perder contraste con el fondo rojo. */
-.header__nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.header--scrolled .header__nav a:hover { color: var(--rojo-oscuro); text-decoration: none; }
+.header__nav a:hover, .header__nav button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.header--scrolled .header__nav a:hover, .header--scrolled .header__nav button:hover { color: var(--rojo-oscuro); text-decoration: none; }
 
-.header__cta { display: none; }
-
-.header__carrito-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: var(--crema);
-  transition: color var(--transition-med);
-}
-.header--scrolled .header__carrito-btn { color: var(--negro); }
-.header__carrito-btn svg { width: 23px; height: 23px; }
-.header__carrito-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 16px;
-  height: 16px;
-  padding-inline: 3px;
+.header__nav-badge {
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
   border-radius: 999px;
   background: var(--naranja);
   color: var(--negro);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
 }
+
+.header__cta { display: none; }
 
 .header__hamburger {
   display: flex;
@@ -377,12 +374,31 @@ body.no-scroll {
   justify-content: center;
   gap: var(--space-lg);
 }
-.mobile-nav__nav a {
+.mobile-nav__nav a, .mobile-nav__nav button {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
   font-size: 1.8rem;
   color: var(--crema);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mobile-nav__badge {
+  min-width: 26px;
+  height: 26px;
+  padding-inline: 6px;
+  border-radius: 999px;
+  background: var(--naranja);
+  color: var(--negro);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 @media (min-width: 900px) {
@@ -1286,7 +1302,8 @@ body.no-scroll {
   font-weight: 800;
 }
 .carrito-btn__badge[hidden],
-.header__carrito-badge[hidden] {
+.header__nav-badge[hidden],
+.mobile-nav__badge[hidden] {
   display: none;
 }
 

@@ -201,7 +201,7 @@ function initHeader() {
 
   toggleBtn.addEventListener('click', openMenu);
   closeBtn.addEventListener('click', closeMenu);
-  mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+  mobileNav.querySelectorAll('a, [data-carrito-abrir]').forEach((a) => a.addEventListener('click', closeMenu));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMenu();
   });
