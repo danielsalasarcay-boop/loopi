@@ -48,7 +48,6 @@ const MENU = [
     descripcion: 'Vegetales salteados y jamón.',
     img: './img/productos/vegetales.webp',
     imgRuleta: './img/sabores/vegetales.webp',
-    badge: 'La clásica',
   },
   {
     id: 'carbonara',
@@ -57,7 +56,6 @@ const MENU = [
     descripcion: 'Cremosa, con tocineta y queso pecorino.',
     img: './img/productos/carbonara.webp',
     imgRuleta: './img/sabores/carbonara.webp',
-    badge: 'La más pedida',
   },
   {
     id: 'pollo-curry',
@@ -66,7 +64,6 @@ const MENU = [
     descripcion: 'Pollo con un toque de curry exótico.',
     img: './img/productos/pollo-curry.webp',
     imgRuleta: './img/sabores/pollo-curry.webp',
-    badge: 'La irresistible',
   },
   {
     id: 'funghi',
@@ -75,7 +72,6 @@ const MENU = [
     descripcion: 'Diferentes tipos de hongos salteados.',
     img: './img/productos/funghi.webp',
     imgRuleta: './img/sabores/funghi.webp',
-    badge: 'La fitness',
   },
   {
     id: 'morcilla-carupanera',
@@ -84,7 +80,6 @@ const MENU = [
     descripcion: 'Directo de Carúpano, sabor venezolano.',
     img: './img/productos/morcilla-carupanera.webp',
     imgRuleta: './img/sabores/morcilla-carupanera.webp',
-    badge: 'La local',
   },
   {
     id: 'salted-caramel',
@@ -93,7 +88,6 @@ const MENU = [
     descripcion: 'Caramelo salado, dulce con carácter.',
     img: './img/productos/salted-caramel.webp',
     imgRuleta: './img/sabores/salted-caramel.webp',
-    badge: 'La explosiva',
   },
   {
     id: 'nutella',
@@ -102,7 +96,6 @@ const MENU = [
     descripcion: 'Nutella es nutella.',
     img: './img/productos/nutella.webp',
     imgRuleta: './img/sabores/nutella.webp',
-    badge: 'La tentación',
   },
 ];
 
@@ -243,10 +236,8 @@ function renderFilaTamano(item, tamano) {
 }
 
 function renderTarjetaMenu(item) {
-  const badgeHtml = item.badge ? `<span class="card__badge">${item.badge}</span>` : '';
   return `
     <article class="card">
-      ${badgeHtml}
       <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
       <div class="card__body">
         <div class="card__title-row">
@@ -472,7 +463,7 @@ function initRuleta() {
 
   track.innerHTML = MENU.map(
     (item) => `
-      <a href="#menu" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
+      <a href="#productos" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
         <img src="${item.imgRuleta || item.img}" alt="" width="160" height="160" loading="lazy">
         <span>${item.nombre}</span>
       </a>`
@@ -933,7 +924,64 @@ function initHumoLumpia3D() {
   return { iniciar, detener };
 }
 
+/* ============================================================
+   Mira de cerca — carrusel de una sola foto con su frase
+   superpuesta, centrada. Una flecha avanza a la siguiente
+   combinación de foto+frase (en loop). Reemplaza la vieja galería
+   de 3 filas: en mobile una sola foto es mucho más corta que 3.
+   ============================================================ */
+const MIRA_CERCA_SLIDES = [
+  {
+    img: './img/galeria/galeria-08-torre.webp',
+    alt: 'Mini lumpias loopi apiladas, doradas y crocantes',
+    lineas: [
+      { texto: 'Best' },
+      { texto: 'Lumpias', color: 'naranja' },
+      { texto: 'in Town', color: 'morado' },
+    ],
+  },
+  {
+    img: './img/galeria/galeria-03-salsa.webp',
+    alt: 'Mini lumpia loopi siendo mojada en salsa, ambiente cálido',
+    lineas: [
+      { texto: 'Eleva tu evento' },
+      { texto: 'con la experiencia', color: 'rojo' },
+      { texto: 'Loopi', color: 'naranja' },
+    ],
+  },
+  {
+    img: './img/galeria/galeria-06-friendo.webp',
+    alt: 'Mini lumpias loopi friéndose hasta quedar doradas',
+    lineas: [
+      { texto: 'Una explosión' },
+      { texto: 'de', color: 'morado' },
+      { texto: 'sabores', color: 'naranja' },
+    ],
+  },
+];
 
+function initMiraCerca() {
+  const img = document.querySelector('#mira-cerca-img');
+  const quote = document.querySelector('#mira-cerca-quote');
+  const nextBtn = document.querySelector('#mira-cerca-next');
+  if (!img || !quote || !nextBtn) return;
+
+  let indice = 0;
+
+  const render = () => {
+    const slide = MIRA_CERCA_SLIDES[indice];
+    img.src = slide.img;
+    img.alt = slide.alt;
+    quote.innerHTML = slide.lineas
+      .map((l) => `<span class="mira-cerca__linea${l.color ? ` mira-cerca__linea--${l.color}` : ''}">${l.texto}</span>`)
+      .join('');
+  };
+
+  nextBtn.addEventListener('click', () => {
+    indice = (indice + 1) % MIRA_CERCA_SLIDES.length;
+    render();
+  });
+}
 
 /* ============================================================
    Init general
@@ -954,5 +1002,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initFooter();
   initScrollSuave();
   initRevealOnScroll();
+  initMiraCerca();
   initJsonLd();
 });
