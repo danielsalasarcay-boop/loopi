@@ -866,13 +866,19 @@ body.no-scroll {
 .menu { padding-top: 0; }
 
 .menu__eyebrow {
+  display: block;
+  width: fit-content;
+  margin-inline: auto;
+  margin-bottom: var(--space-sm);
+  padding: 0.1em 0.5em;
+  border: 3px solid var(--negro);
+  border-radius: 6px;
   text-align: center;
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
   font-size: 1.9rem;
   color: var(--negro);
-  margin-bottom: var(--space-xs);
 }
 
 .menu__block { padding-block: var(--space-lg); }
