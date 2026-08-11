@@ -1061,32 +1061,51 @@ body.no-scroll {
    esa sección se eliminó y el carrito flotante cubre ese flujo.)
    ========================================================================== */
 .tips { padding-block: var(--space-2xl); background: var(--crema); text-align: center; }
+/* 3 columnas desde mobile (antes se apilaba en 1 sola columna larga) —
+   en desktop los 3 pasos ya van uno al lado del otro, así que en
+   teléfono tienen que verse igual, solo que compacto. */
 .pasos {
   display: grid;
-  gap: var(--space-lg);
-  margin-top: var(--space-lg);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
 }
 @media (min-width: 700px) {
-  .pasos { grid-template-columns: repeat(3, 1fr); }
+  .pasos { gap: var(--space-lg); margin-top: var(--space-lg); }
 }
-.paso { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+.paso { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
+@media (min-width: 700px) {
+  .paso { gap: var(--space-sm); }
+}
 .paso h3 {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 1.1rem;
+  font-size: 0.8rem;
 }
-.paso p { color: var(--texto-muted); max-width: 32ch; }
+@media (min-width: 700px) {
+  .paso h3 { font-size: 1.1rem; }
+}
+.paso p { color: var(--texto-muted); font-size: 0.72rem; line-height: 1.25; }
+@media (min-width: 700px) {
+  .paso p { font-size: 1rem; max-width: 32ch; }
+}
 .paso__icono {
-  width: 72px;
-  height: 72px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--crema);
 }
-.paso__icono svg { width: 32px; height: 32px; }
+@media (min-width: 700px) {
+  .paso__icono { width: 72px; height: 72px; }
+}
+.paso__icono svg { width: 20px; height: 20px; }
+@media (min-width: 700px) {
+  .paso__icono svg { width: 32px; height: 32px; }
+}
 .paso__icono--rojo { background: var(--rojo); box-shadow: var(--shadow-rojo); }
 .paso__icono--naranja { background: var(--naranja); color: var(--negro); }
 .paso__icono--morado { background: var(--morado); box-shadow: var(--shadow-morado); }
@@ -1504,8 +1523,7 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
    grandes — Explora los sabores, Tips, Galería, Contacto, el respiro debajo
    del hero) para que cada sección ocupe menos alto sin cambiar su
    orientación ni su contenido, más algunos ajustes puntuales donde el
-   espaciado no viene de esas variables (Tips cuando sus 3 pasos están
-   apilados en una sola columna, los bloques de Salados/Dulces).
+   espaciado no viene de esas variables (los bloques de Salados/Dulces).
    ========================================================================== */
 @media (max-width: 640px) {
   :root {
@@ -1513,9 +1531,6 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
     --space-2xl: 3.5rem;
   }
   .menu__block { padding-block: var(--space-md); }
-  .pasos { gap: var(--space-md); }
-  .paso__icono { width: 56px; height: 56px; }
-  .paso__icono svg { width: 26px; height: 26px; }
   .mira-cerca { padding-block: var(--space-md); }
   .hero__slogan { margin-bottom: var(--space-md); }
 
