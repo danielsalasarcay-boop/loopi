@@ -588,7 +588,6 @@ function initFooter() {
    Scroll suave compensando header sticky
    ============================================================ */
 function initScrollSuave() {
-  const header = document.querySelector('.header');
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       const id = link.getAttribute('href');
@@ -596,9 +595,11 @@ function initScrollSuave() {
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      const offset = (header ? header.offsetHeight : 0) + 12;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+      // scrollIntoView (con scroll-margin-top en CSS compensando el header)
+      // en vez de calcular el offset a mano: ese cálculo se queda desactualizado
+      // si el alto del viewport cambia a mitad del scroll suave (pasa en móvil,
+      // el hero usa 140svh y svh varía cuando la barra de direcciones se oculta).
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     });
   });
 }
@@ -758,7 +759,7 @@ function initLluviaLumpias() {
 
   const SPRITE = './img/hero/lumpia-sprite-01.png';
   const CANTIDAD = 22;
-  const VENTANA_MS = 4000;
+  const VENTANA_MS = 1500;
 
   const crearLumpia = () => {
     const img = document.createElement('img');
@@ -771,7 +772,7 @@ function initLluviaLumpias() {
     const chica = Math.random() < 0.5;
     const tamano = chica ? 16 + Math.random() * 18 : 42 + Math.random() * 40;
     const izquierda = Math.random() * 96;
-    const duracion = 2.6 + Math.random() * 2.2;
+    const duracion = 1.6 + Math.random() * 1.4;
     const rotInicial = Math.random() * 360;
     const rotFinal = rotInicial + (Math.random() > 0.5 ? 1 : -1) * (180 + Math.random() * 360);
 
@@ -789,7 +790,7 @@ function initLluviaLumpias() {
     for (let i = 0; i < CANTIDAD; i++) {
       setTimeout(crearLumpia, Math.random() * VENTANA_MS);
     }
-  }, 5000);
+  }, 1200);
 }
 
 /* ============================================================
