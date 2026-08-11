@@ -217,25 +217,16 @@ function initBotonesGenericos() {
 }
 
 /* ============================================================
-   Menú de sabores — una tarjeta por sabor, con los dos tamaños
-   (12 y 24) juntos adentro, cada uno con su precio y su stepper.
+   Menú de sabores — una tarjeta por sabor con la foto grande arriba
+   y, abajo, un selector de tamaño (12/24, con precio en la pill) más
+   un solo stepper +/- que actúa sobre el tamaño elegido. Antes eran
+   2 filas fijas (una por tamaño) con su propio stepper cada una —
+   esto le da más protagonismo a la foto y ocupa menos alto.
    ============================================================ */
-function renderFilaTamano(item, tamano) {
-  const clave = claveItem(item.id, tamano);
-  const cantidad = statePedido.cantidades[clave] || 0;
-  return `
-    <div class="card__tamano-row">
-      <span class="card__tamano-label">Empaque de ${tamano} <strong>$${PRECIOS[tamano]}</strong></span>
-      <button type="button" class="card__borrar" data-borrar-clave="${clave}" aria-label="Quitar empaque de ${tamano} de ${item.nombre}" ${cantidad === 0 ? 'hidden' : ''}>${ICONS.trash}</button>
-      <div class="stepper card__stepper">
-        <button type="button" class="stepper__btn" data-accion="mas" data-clave="${clave}" aria-label="Agregar un empaque de ${tamano} de ${item.nombre}">${ICONS.plus}</button>
-        <span class="stepper__cantidad" data-clave-cantidad="${clave}">${cantidad}</span>
-        <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar un empaque de ${tamano} de ${item.nombre}">${ICONS.minus}</button>
-      </div>
-    </div>`;
-}
-
 function renderTarjetaMenu(item) {
+  const tamanoInicial = TAMANOS[0];
+  const claveInicial = claveItem(item.id, tamanoInicial);
+  const cantidadInicial = statePedido.cantidades[claveInicial] || 0;
   return `
     <article class="card">
       <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
@@ -245,11 +236,59 @@ function renderTarjetaMenu(item) {
           <span class="card__unidades" data-item-unidades="${item.id}" hidden>0 unidades</span>
         </div>
         <p class="card__desc">${item.descripcion}</p>
-        <div class="card__tamanos">
-          ${TAMANOS.map((t) => renderFilaTamano(item, t)).join('')}
+        <div class="card__tamano-selector" role="group" aria-label="Elegir tamaño de empaque">
+          ${TAMANOS.map(
+            (t) => `
+            <button type="button" class="card__tamano-btn${t === tamanoInicial ? ' is-active' : ''}" data-tamano-btn="${t}" data-item="${item.id}">
+              <span class="card__tamano-btn-num">${t}</span>
+              <span class="card__tamano-btn-precio">$${PRECIOS[t]}</span>
+            </button>`
+          ).join('')}
+        </div>
+        <div class="stepper card__stepper">
+          <button type="button" class="stepper__btn" data-accion="menos" data-clave="${claveInicial}" aria-label="Quitar un empaque de ${tamanoInicial} de ${item.nombre}">${ICONS.minus}</button>
+          <span class="stepper__cantidad" data-clave-cantidad="${claveInicial}">${cantidadInicial}</span>
+          <button type="button" class="stepper__btn" data-accion="mas" data-clave="${claveInicial}" aria-label="Agregar un empaque de ${tamanoInicial} de ${item.nombre}">${ICONS.plus}</button>
         </div>
       </div>
     </article>`;
+}
+
+// Cambia qué tamaño controla el stepper de la tarjeta: reapunta data-clave
+// de los botones +/- y del contador al tamaño elegido, y refresca el
+// número mostrado con la cantidad ya guardada de ese tamaño (si el
+// usuario ya había agregado antes, no se pierde nada, solo estaba en el
+// otro tamaño).
+function initSelectorTamano() {
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.card__tamano-btn');
+    if (!btn) return;
+    const card = btn.closest('.card');
+    if (!card) return;
+    const itemId = btn.dataset.item;
+    const tamano = btn.dataset.tamanoBtn;
+    const item = MENU.find((m) => m.id === itemId);
+    if (!item) return;
+    const clave = claveItem(itemId, tamano);
+
+    card.querySelectorAll('.card__tamano-btn').forEach((b) => b.classList.toggle('is-active', b === btn));
+
+    const menosBtn = card.querySelector('.stepper__btn[data-accion="menos"]');
+    const masBtn = card.querySelector('.stepper__btn[data-accion="mas"]');
+    const cantidadEl = card.querySelector('.stepper__cantidad');
+    if (menosBtn) {
+      menosBtn.dataset.clave = clave;
+      menosBtn.setAttribute('aria-label', `Quitar un empaque de ${tamano} de ${item.nombre}`);
+    }
+    if (masBtn) {
+      masBtn.dataset.clave = clave;
+      masBtn.setAttribute('aria-label', `Agregar un empaque de ${tamano} de ${item.nombre}`);
+    }
+    if (cantidadEl) {
+      cantidadEl.dataset.claveCantidad = clave;
+      cantidadEl.textContent = String(statePedido.cantidades[clave] || 0);
+    }
+  });
 }
 
 function renderMenu() {
@@ -358,13 +397,6 @@ function actualizarPedidoUI() {
       .reduce((sum, i) => sum + i.cantidad, 0);
     el.textContent = `${unidadesItem} unidades`;
     el.hidden = unidadesItem === 0;
-  });
-
-  // Papeleras de las tarjetas del menú (las del resumen del carrito ya se
-  // regeneran solas arriba con innerHTML, no hace falta tocarlas acá).
-  document.querySelectorAll('.card__borrar[data-borrar-clave]').forEach((btn) => {
-    const clave = btn.dataset.borrarClave;
-    btn.hidden = (statePedido.cantidades[clave] || 0) === 0;
   });
 
   guardarPedido();
@@ -997,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLumpia3D();
   initRuleta();
   renderMenu();
+  initSelectorTamano();
   initPedido();
   initCarritoFlotante();
   initGaleria();
