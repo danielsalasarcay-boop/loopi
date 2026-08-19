@@ -682,7 +682,7 @@ body.no-scroll {
    en main.js. Reemplaza la vieja galería de 3 filas apiladas — mucho
    más corta en mobile, que era el problema original.
    ========================================================================== */
-.mira-cerca { background: var(--negro); padding-block: var(--space-lg); }
+.mira-cerca { background: #FFD400; padding-block: var(--space-lg); }
 .mira-cerca__frame {
   position: relative;
   max-width: 520px;
