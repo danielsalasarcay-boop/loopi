@@ -767,23 +767,10 @@ body.no-scroll {
    (título + kicker + carrusel) es angosto, no ocupa el centro entero
    como en el footer, así que no hace falta despejarle el medio. */
 .ruleta {
-  position: relative;
-  overflow: hidden;
   padding-block: var(--space-2xl);
-  background: var(--crema);
+  background: #fff;
   text-align: center;
 }
-.ruleta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M80 80 m0 -4 a4 4 0 1 1 4 4 a10 10 0 1 1 -10 -10 a16 16 0 1 1 16 16 a22 22 0 1 1 -22 -22 a28 28 0 1 1 28 28' fill='none' stroke='%23FFA500' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-  pointer-events: none;
-}
-.ruleta > * { position: relative; z-index: 1; }
 .ruleta .section-subtitle { margin-inline: auto; }
 .ruleta__kicker {
   font-family: var(--font-heading);
