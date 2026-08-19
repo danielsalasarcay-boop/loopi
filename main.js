@@ -46,7 +46,8 @@ const MENU = [
     nombre: 'Vegetales',
     categoria: 'salado',
     descripcion: 'Vegetales salteados y jamón.',
-    img: './img/productos/vegetales.webp',
+    img12: './img/productos/vegetales-12.webp',
+    img24: './img/productos/vegetales-24.webp',
     imgRuleta: './img/sabores/vegetales.webp',
   },
   {
@@ -54,7 +55,8 @@ const MENU = [
     nombre: 'Carbonara',
     categoria: 'salado',
     descripcion: 'Cremosa, con tocineta y queso pecorino.',
-    img: './img/productos/carbonara.webp',
+    img12: './img/productos/carbonara-12.webp',
+    img24: './img/productos/carbonara-24.webp',
     imgRuleta: './img/sabores/carbonara.webp',
   },
   {
@@ -62,7 +64,8 @@ const MENU = [
     nombre: 'Pollo al Curry',
     categoria: 'salado',
     descripcion: 'Pollo con un toque de curry exótico.',
-    img: './img/productos/pollo-curry.webp',
+    img12: './img/productos/pollo-curry-12.webp',
+    img24: './img/productos/pollo-curry-24.webp',
     imgRuleta: './img/sabores/pollo-curry.webp',
   },
   {
@@ -70,7 +73,8 @@ const MENU = [
     nombre: 'Funghi',
     categoria: 'salado',
     descripcion: 'Diferentes tipos de hongos salteados.',
-    img: './img/productos/funghi.webp',
+    img12: './img/productos/funghi-12.webp',
+    img24: './img/productos/funghi-24.webp',
     imgRuleta: './img/sabores/funghi.webp',
   },
   {
@@ -78,7 +82,8 @@ const MENU = [
     nombre: 'Morcilla Carupanera',
     categoria: 'salado',
     descripcion: 'Directo de Carúpano, sabor venezolano.',
-    img: './img/productos/morcilla-carupanera.webp',
+    img12: './img/productos/morcilla-carupanera-12.webp',
+    img24: './img/productos/morcilla-carupanera-24.webp',
     imgRuleta: './img/sabores/morcilla-carupanera.webp',
   },
   {
@@ -86,7 +91,8 @@ const MENU = [
     nombre: 'Salted Caramel',
     categoria: 'postre',
     descripcion: 'Caramelo salado, dulce con carácter.',
-    img: './img/productos/salted-caramel.webp',
+    img12: './img/productos/salted-caramel-12.webp',
+    img24: './img/productos/salted-caramel-24.webp',
     imgRuleta: './img/sabores/salted-caramel.webp',
   },
   {
@@ -94,7 +100,8 @@ const MENU = [
     nombre: 'Nutella',
     categoria: 'postre',
     descripcion: 'Nutella es nutella.',
-    img: './img/productos/nutella.webp',
+    img12: './img/productos/nutella-12.webp',
+    img24: './img/productos/nutella-24.webp',
     imgRuleta: './img/sabores/nutella.webp',
   },
 ];
@@ -221,15 +228,21 @@ function initBotonesGenericos() {
    y, abajo, un selector de tamaño (12/24, con precio en la pill) más
    un solo stepper +/- que actúa sobre el tamaño elegido. Antes eran
    2 filas fijas (una por tamaño) con su propio stepper cada una —
-   esto le da más protagonismo a la foto y ocupa menos alto.
+   esto le da más protagonismo a la foto y ocupa menos alto. La foto
+   también cambia según el tamaño elegido: cada empaque tiene su
+   propio render (la etiqueta dice "12 unidades" o "24 unidades").
    ============================================================ */
+function imgTamano(item, tamano) {
+  return Number(tamano) === 24 ? item.img24 : item.img12;
+}
+
 function renderTarjetaMenu(item) {
   const tamanoInicial = TAMANOS[0];
   const claveInicial = claveItem(item.id, tamanoInicial);
   const cantidadInicial = statePedido.cantidades[claveInicial] || 0;
   return `
     <article class="card">
-      <img class="card__img" src="${item.img}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
+      <img class="card__img" data-item-img="${item.id}" src="${imgTamano(item, tamanoInicial)}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
       <div class="card__body">
         <div class="card__title-row">
           <h3 class="card__title">${item.nombre}</h3>
@@ -272,6 +285,9 @@ function initSelectorTamano() {
     const clave = claveItem(itemId, tamano);
 
     card.querySelectorAll('.card__tamano-btn').forEach((b) => b.classList.toggle('is-active', b === btn));
+
+    const imgEl = card.querySelector('.card__img');
+    if (imgEl) imgEl.src = imgTamano(item, tamano);
 
     const menosBtn = card.querySelector('.stepper__btn[data-accion="menos"]');
     const masBtn = card.querySelector('.stepper__btn[data-accion="mas"]');
@@ -498,7 +514,7 @@ function initRuleta() {
   track.innerHTML = MENU.map(
     (item) => `
       <a href="#productos" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
-        <img src="${item.imgRuleta || item.img}" alt="" width="160" height="160" loading="lazy">
+        <img src="${item.imgRuleta}" alt="" width="160" height="160" loading="lazy">
         <span>${item.nombre}</span>
       </a>`
   ).join('');

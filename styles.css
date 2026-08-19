@@ -920,12 +920,10 @@ body.no-scroll {
   flex-direction: column;
 }
 .card:hover { transform: scale(1.03); box-shadow: var(--shadow-rojo); }
-/* 1/1 porque las fotos (reales y los placeholders "FOTO PENDIENTE") son
-   cuadradas de origen — forzarlas a 4/5 con object-fit:cover recorta los
-   bordes izquierdo/derecho, y en los placeholders eso corta el texto. Las
-   2 columnas desde mobile ya acortan la sección por su cuenta, sin
-   necesidad de recortar la imagen también. */
-.card__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+/* Renders reales del empaque (PNG con fondo transparente, 1:1) — contain
+   sobre fondo blanco en vez de cover, para que se vea la bolsita entera
+   sin recortarla y que la foto tenga protagonismo real. */
+.card__img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
 .card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; }
 .card__title-row {
   display: flex;
