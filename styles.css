@@ -61,20 +61,12 @@ html { scroll-behavior: auto; }
 /* Compensa el header fijo en todo scroll-to-anchor (scrollIntoView en
    initScrollSuave, main.js) para que el destino no quede tapado. */
 section[id] { scroll-margin-top: calc(var(--header-height) + 12px); }
-/* Cursor de marca: la espiral (rollito), en vez de la flecha del sistema.
-   32x32 es el tamaño máximo con soporte confiable entre navegadores para
-   cursores de imagen; el hotspot "16 16" lo centra en el medio del ícono.
-   auto de respaldo por si el navegador no soporta cursores custom. */
 body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--texto-oscuro);
   background: var(--crema);
   -webkit-font-smoothing: antialiased;
-  cursor: url('./assets/logo/cursor-rollito.png') 16 16, auto;
-}
-a, button, .carrito-linea__borrar, .stepper__btn, [role="button"] {
-  cursor: url('./assets/logo/cursor-rollito.png') 16 16, pointer;
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
