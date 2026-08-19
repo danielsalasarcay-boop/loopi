@@ -682,8 +682,12 @@ body.no-scroll {
    en main.js. Reemplaza la vieja galería de 3 filas apiladas — mucho
    más corta en mobile, que era el problema original.
    ========================================================================== */
+/* Alto tope en vez de height:auto con el ratio nativo — a lo ancho
+   completo esa foto escalaba sin límite y en pantallas grandes
+   terminaba mucho más alta que Contacto. object-fit:cover la recorta
+   prolijo (el contenido interesante está centrado/a la derecha). */
 .mira-cerca { line-height: 0; }
-.mira-cerca__img { width: 100%; height: auto; display: block; }
+.mira-cerca__img { width: 100%; height: 420px; object-fit: cover; display: block; }
 
 /* ==========================================================================
    Reveal genérico (IntersectionObserver)
