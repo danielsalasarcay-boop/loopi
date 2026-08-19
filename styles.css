@@ -1138,8 +1138,23 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   gap: var(--space-md);
   text-align: center;
 }
-.footer__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; font-size: 0.85rem; }
-.footer__nav a:hover { color: var(--naranja); }
+.footer__nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-md); font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; font-size: 0.85rem; }
+.footer__nav a:hover, .footer__nav button:hover { color: var(--naranja); }
+.footer__nav button { display: inline-flex; align-items: center; gap: 0.35rem; }
+.footer__nav-badge {
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border-radius: 999px;
+  background: var(--naranja);
+  color: var(--negro);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
 /* Distinto a los botones flotantes fijos (círculo sólido de color): acá va
    un sticker tipo street — fondo negro, borde grueso de color, ícono en
    ese mismo color, ligera rotación como si fuera un parche pegado. */
@@ -1220,7 +1235,8 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
 }
 .carrito-btn__badge[hidden],
 .header__nav-badge[hidden],
-.mobile-nav__badge[hidden] {
+.mobile-nav__badge[hidden],
+.footer__nav-badge[hidden] {
   display: none;
 }
 
