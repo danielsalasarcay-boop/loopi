@@ -766,81 +766,34 @@ body.no-scroll {
    crema — sin máscara radial acá porque el contenido de esta sección
    (título + kicker + carrusel) es angosto, no ocupa el centro entero
    como en el footer, así que no hace falta despejarle el medio. */
-.ruleta {
-  padding-block: var(--space-2xl);
-  background: #fff;
-  text-align: center;
-}
-.ruleta .section-subtitle { margin-inline: auto; }
-.ruleta__kicker {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  color: var(--rojo);
-  margin-top: var(--space-xs);
-}
-.ruleta__track-wrap {
-  position: relative;
-  max-width: var(--container-max);
+.salsas { padding-block: var(--space-2xl); background: #fff; text-align: center; }
+.salsas__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  max-width: 640px;
   margin-inline: auto;
-  padding-inline: var(--space-md);
+  margin-top: var(--space-lg);
 }
-.ruleta__track {
+.salsa__item {
   display: flex;
-  gap: var(--space-md);
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: var(--space-md);
-  padding-block: 0.4rem;
-  padding-inline: 0.2rem;
-  scrollbar-width: none;
-}
-.ruleta__track::-webkit-scrollbar { display: none; }
-.ruleta__card {
-  scroll-snap-align: start;
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
-  width: 130px;
+  gap: var(--space-sm);
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--crema);
+  border: 1px solid rgba(17, 17, 17, 0.08);
 }
-.ruleta__card img {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--naranja);
-  transition: transform var(--transition-fast);
-}
-.ruleta__card--postre img { border-color: var(--morado); }
-.ruleta__card:hover img { transform: scale(1.06); }
-.ruleta__card span {
+.salsa__nombre {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 0.85rem;
-  color: var(--texto-oscuro);
+  font-size: 0.9rem;
+  color: var(--negro);
+  white-space: nowrap;
 }
-.ruleta__arrow {
-  display: none;
-  position: absolute;
-  top: 55px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--crema);
-  color: var(--rojo-oscuro);
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-suave);
-  z-index: 2;
-}
-.ruleta__arrow svg { width: 20px; height: 20px; }
-.ruleta__arrow--prev { left: -6px; }
-.ruleta__arrow--next { right: -6px; }
-@media (min-width: 720px) {
-  .ruleta__arrow { display: flex; }
-}
+.salsa__stepper { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
 
 /* ==========================================================================
    Menú

@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=41">
+  <link rel="stylesheet" href="./styles.css?v=42">
 </head>
 <body>
 
@@ -132,21 +132,11 @@
       </div>
     </section>
 
-    <!-- ============ MIRA DE CERCA — GALERÍA ============ -->
-    <!-- ============ RULETA DE SABORES ============ -->
-    <section class="ruleta" aria-label="Explora los sabores de loopi">
+    <!-- ============ ESCOGE TU SALSA ============ -->
+    <section class="salsas" id="salsas" aria-label="Escoge tu salsa">
       <div class="container">
-        <h2 class="section-title" data-reveal>Explora los sabores</h2>
-        <p class="ruleta__kicker" data-reveal>¡Desliza para conocerlos!</p>
-      </div>
-      <div class="ruleta__track-wrap" data-reveal>
-        <button type="button" class="ruleta__arrow ruleta__arrow--prev" aria-label="Sabor anterior">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <div class="ruleta__track" id="ruleta-track"></div>
-        <button type="button" class="ruleta__arrow ruleta__arrow--next" aria-label="Sabor siguiente">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+        <h2 class="section-title" data-reveal>Escoge tu salsa</h2>
+        <div class="salsas__grid" id="salsas-grid" data-reveal></div>
       </div>
     </section>
 
@@ -326,6 +316,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=34"></script>
+  <script src="./main.js?v=35"></script>
 </body>
 </html>

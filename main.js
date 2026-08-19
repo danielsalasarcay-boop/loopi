@@ -36,6 +36,21 @@ function claveItem(id, tamano) {
   return `${id}-${tamano}`;
 }
 
+// Salsas — se agregan al pedido como item aparte, $1 c/u. El precio no se
+// muestra junto al nombre en "Escoge tu salsa", solo dentro del carrito.
+const SALSAS = [
+  { id: 'soya', nombre: 'Soya' },
+  { id: 'agridulce', nombre: 'Agridulce' },
+  { id: 'ponzu', nombre: 'Ponzu' },
+  { id: 'mango-chutney', nombre: 'Mango Chutney' },
+  { id: 'thai', nombre: 'Thai' },
+];
+const PRECIO_SALSA = 1;
+
+function claveSalsa(id) {
+  return `salsa-${id}`;
+}
+
 /* ============================================================
    MENU — catálogo de sabores. Agregar un sabor nuevo es
    agregar una línea aquí; el HTML se genera solo.
@@ -48,7 +63,6 @@ const MENU = [
     descripcion: 'Vegetales salteados y jamón.',
     img12: './img/productos/vegetales-12.webp',
     img24: './img/productos/vegetales-24.webp',
-    imgRuleta: './img/sabores/vegetales.webp',
   },
   {
     id: 'carbonara',
@@ -57,7 +71,6 @@ const MENU = [
     descripcion: 'Cremosa, con tocineta y queso pecorino.',
     img12: './img/productos/carbonara-12.webp',
     img24: './img/productos/carbonara-24.webp',
-    imgRuleta: './img/sabores/carbonara.webp',
   },
   {
     id: 'pollo-curry',
@@ -66,7 +79,6 @@ const MENU = [
     descripcion: 'Pollo con un toque de curry exótico.',
     img12: './img/productos/pollo-curry-12.webp',
     img24: './img/productos/pollo-curry-24.webp',
-    imgRuleta: './img/sabores/pollo-curry.webp',
   },
   {
     id: 'funghi',
@@ -75,7 +87,6 @@ const MENU = [
     descripcion: 'Diferentes tipos de hongos salteados.',
     img12: './img/productos/funghi-12.webp',
     img24: './img/productos/funghi-24.webp',
-    imgRuleta: './img/sabores/funghi.webp',
   },
   {
     id: 'morcilla-carupanera',
@@ -84,7 +95,6 @@ const MENU = [
     descripcion: 'Directo de Carúpano, sabor venezolano.',
     img12: './img/productos/morcilla-carupanera-12.webp',
     img24: './img/productos/morcilla-carupanera-24.webp',
-    imgRuleta: './img/sabores/morcilla-carupanera.webp',
   },
   {
     id: 'salted-caramel',
@@ -93,7 +103,6 @@ const MENU = [
     descripcion: 'Caramelo salado, dulce con carácter.',
     img12: './img/productos/salted-caramel-12.webp',
     img24: './img/productos/salted-caramel-24.webp',
-    imgRuleta: './img/sabores/salted-caramel.webp',
   },
   {
     id: 'nutella',
@@ -102,7 +111,6 @@ const MENU = [
     descripcion: 'Nutella es nutella.',
     img12: './img/productos/nutella-12.webp',
     img24: './img/productos/nutella-24.webp',
-    imgRuleta: './img/sabores/nutella.webp',
   },
 ];
 
@@ -148,7 +156,9 @@ function mensajeGenerico() {
 // y el total, para que el pedido llegue completo por WhatsApp.
 function mensajePedido(items) {
   const lineas = items
-    .map((i) => `• ${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
+    .map((i) => i.categoria === 'salsa'
+      ? `• ${i.cantidad}x Salsa ${i.nombre} — $${i.cantidad * i.precioUnit}`
+      : `• ${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
     .join('\n');
   const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
   return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\nTotal: $${total}\n\n¿Me confirman disponibilidad, forma de pago y costo del delivery?`;
@@ -353,6 +363,11 @@ MENU.forEach((item) => {
     statePedido.cantidades[clave] = Math.max(0, Number(guardado) || 0);
   });
 });
+SALSAS.forEach((salsa) => {
+  const clave = claveSalsa(salsa.id);
+  const guardado = pedidoGuardado && pedidoGuardado.cantidades && pedidoGuardado.cantidades[clave];
+  statePedido.cantidades[clave] = Math.max(0, Number(guardado) || 0);
+});
 
 // Lista de líneas con cantidad > 0, con nombre/tamaño/precio ya resueltos —
 // la usan el resumen del carrito y el mensaje de WhatsApp.
@@ -367,15 +382,26 @@ function itemsDelPedido() {
       }
     });
   });
+  SALSAS.forEach((salsa) => {
+    const clave = claveSalsa(salsa.id);
+    const cantidad = statePedido.cantidades[clave];
+    if (cantidad > 0) {
+      items.push({ id: salsa.id, clave, nombre: salsa.nombre, categoria: 'salsa', cantidad, precioUnit: PRECIO_SALSA });
+    }
+  });
   return items;
 }
 
 function renderLineaCarrito(i) {
+  const desc = i.categoria === 'salsa'
+    ? `${i.cantidad}x Salsa ${i.nombre}`
+    : `${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre}`;
+  const etiquetaBorrar = i.categoria === 'salsa' ? `Quitar salsa ${i.nombre} del pedido` : `Quitar ${i.nombre} de ${i.tamano} del pedido`;
   return `
     <div class="carrito-linea">
-      <span class="carrito-linea__desc">${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre}</span>
+      <span class="carrito-linea__desc">${desc}</span>
       <strong class="carrito-linea__precio">$${i.cantidad * i.precioUnit}</strong>
-      <button type="button" class="carrito-linea__borrar" data-borrar-clave="${i.clave}" aria-label="Quitar ${i.nombre} de ${i.tamano} del pedido">${ICONS.trash}</button>
+      <button type="button" class="carrito-linea__borrar" data-borrar-clave="${i.clave}" aria-label="${etiquetaBorrar}">${ICONS.trash}</button>
     </div>`;
 }
 
@@ -504,35 +530,27 @@ function initCarritoFlotante() {
 }
 
 /* ============================================================
-   Ruleta de sabores — carrusel deslizable (scroll-snap nativo +
-   flechas). Cada tarjeta lleva directo al sabor en el menú.
+   Escoge tu salsa — pills con stepper +/- (mismo patrón que el de
+   las tarjetas de Productos). Se agregan al pedido a $1 c/u; ese
+   precio solo se ve reflejado en el carrito, no acá.
    ============================================================ */
-function initRuleta() {
-  const track = document.querySelector('#ruleta-track');
-  if (!track) return;
+function renderSalsas() {
+  const grid = document.querySelector('#salsas-grid');
+  if (!grid) return;
 
-  track.innerHTML = MENU.map(
-    (item) => `
-      <a href="#productos" class="ruleta__card ruleta__card--${item.categoria}" data-id="${item.id}">
-        <img src="${item.imgRuleta}" alt="" width="160" height="160" loading="lazy">
-        <span>${item.nombre}</span>
-      </a>`
-  ).join('');
-
-  const prevBtn = document.querySelector('.ruleta__arrow--prev');
-  const nextBtn = document.querySelector('.ruleta__arrow--next');
-  if (!prevBtn || !nextBtn) return;
-
-  const desplazar = (direccion) => {
-    const card = track.querySelector('.ruleta__card');
-    if (!card) return;
-    const gap = parseFloat(getComputedStyle(track).columnGap || '0') || 0;
-    const delta = (card.getBoundingClientRect().width + gap) * direccion;
-    track.scrollBy({ left: delta, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-  };
-
-  prevBtn.addEventListener('click', () => desplazar(-1));
-  nextBtn.addEventListener('click', () => desplazar(1));
+  grid.innerHTML = SALSAS.map((salsa) => {
+    const clave = claveSalsa(salsa.id);
+    const cantidad = statePedido.cantidades[clave] || 0;
+    return `
+      <div class="salsa__item">
+        <span class="salsa__nombre">${salsa.nombre}</span>
+        <div class="stepper salsa__stepper">
+          <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar salsa ${salsa.nombre}">${ICONS.minus}</button>
+          <span class="stepper__cantidad" data-clave-cantidad="${clave}">${cantidad}</span>
+          <button type="button" class="stepper__btn" data-accion="mas" data-clave="${clave}" aria-label="Agregar salsa ${salsa.nombre}">${ICONS.plus}</button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 /* ============================================================
@@ -1043,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroColorShift();
   initLluviaLumpias();
   initLumpia3D();
-  initRuleta();
+  renderSalsas();
   renderMenu();
   initSelectorTamano();
   initPedido();
