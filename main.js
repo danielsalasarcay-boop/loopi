@@ -658,16 +658,6 @@ function initContacto() {
 }
 
 /* ============================================================
-   Eventos — datos de contacto del bloque "Hablemos de tu evento"
-   ============================================================ */
-function initEventosContacto() {
-  const elWhatsapp = document.querySelector('#evento-dato-whatsapp');
-  const elEmail = document.querySelector('#evento-dato-correo');
-  if (elWhatsapp) elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
-  if (elEmail) elEmail.textContent = CONFIG.contacto.email;
-}
-
-/* ============================================================
    Footer — año dinámico
    ============================================================ */
 function initFooter() {
@@ -1042,7 +1032,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initGaleria();
   initInstagram();
   initContacto();
-  initEventosContacto();
   initFooter();
   initScrollSuave();
   initRevealOnScroll();

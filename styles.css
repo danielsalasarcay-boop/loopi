@@ -1062,16 +1062,24 @@ body.no-scroll {
   color: var(--naranja);
   margin-bottom: var(--space-xs);
 }
+/* El H1 ES la frase de marca ("Eleva tu evento / con la experiencia /
+   loopi") con el mismo tratamiento de línea a línea coloreada que tenía
+   antes en Galería — no hace falta repetirla más abajo. */
 .eventos-hero__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+  margin-bottom: var(--space-sm);
+}
+.eventos-hero__title-linea {
   font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: clamp(2rem, 6vw, 3.2rem);
-  line-height: 1.1;
-  max-width: 18ch;
-  margin-inline: auto;
-  margin-bottom: var(--space-sm);
+  font-size: clamp(2rem, 6.5vw, 3.4rem);
+  line-height: 1.08;
 }
+.eventos-hero__title-linea--rojo { color: var(--rojo); }
+.eventos-hero__title-linea--naranja { color: var(--naranja); }
 .eventos-hero__lead {
   font-size: 1.05rem;
   max-width: 46ch;
@@ -1084,21 +1092,7 @@ body.no-scroll {
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
 }
-.eventos-hero__frase {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.4em;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  text-transform: uppercase;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
-}
-.eventos-hero__frase-linea--naranja { color: var(--naranja); }
-.eventos-hero__frase-linea--crema { opacity: 0.7; }
 
 .eventos-features { padding-block: var(--space-2xl); background: #fff; text-align: center; }
 .eventos-features .section-subtitle { margin-inline: auto; }
@@ -1122,39 +1116,52 @@ body.no-scroll {
 }
 .eventos-features__item p { color: var(--texto-muted); font-size: 0.82rem; line-height: 1.3; max-width: 22ch; }
 
-.contacto .section-subtitle { color: var(--crema); opacity: 0.85; }
-.eventos-cta .contacto__info { max-width: 640px; }
-.eventos-cta__subtitle { margin-inline: auto; }
+/* Bloque final propio (no la tarjeta de Contacto): un solo CTA fuerte
+   en vez de 3 tiles compitiendo — WhatsApp es la vía rápida, correo e
+   Instagram quedan como alternativa chica al pie. Fondo naranja de
+   marca (mismo tono que el bloque Salados) — texto oscuro encima,
+   igual que el resto de los usos de este color en el sitio. */
+.eventos-cta { padding-block: var(--space-2xl); background: var(--naranja); color: var(--negro); text-align: center; }
+.eventos-cta__title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  margin-bottom: var(--space-xs);
+}
+.eventos-cta__lead {
+  font-size: 1.05rem;
+  max-width: 40ch;
+  margin-inline: auto;
+  margin-bottom: var(--space-lg);
+  opacity: 0.9;
+}
+.eventos-cta__whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.1rem 2.2rem;
+  border-radius: var(--radius-pill);
+  background: #25D366;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.eventos-cta__whatsapp svg { width: 24px; height: 24px; }
+.eventos-cta__whatsapp:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3); }
+.eventos-cta__alt { margin-top: var(--space-md); font-size: 0.9rem; opacity: 0.8; }
+.eventos-cta__alt a { color: var(--negro); text-decoration: underline; text-underline-offset: 2px; }
+.eventos-cta__alt a:hover { opacity: 0.7; }
 
 /* ==========================================================================
    Galería + lightbox
    ========================================================================== */
 .galeria { padding-block: var(--space-2xl); background: var(--crema); text-align: center; }
 .galeria .section-subtitle { margin-inline: auto; }
-/* Las 3 frases que antes vivían en el carrusel "Best Lumpias in
-   Town" (ahora es una foto fija) — acá solo el texto, sin fotos. */
-.galeria__frases {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-block: var(--space-lg);
-}
-.galeria__frase {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05em;
-}
-.galeria__frase-linea {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  text-transform: uppercase;
-  font-size: clamp(1.2rem, 5vw, 2rem);
-  line-height: 1.15;
-  color: var(--negro);
-}
-.galeria__frase-linea--rojo { color: var(--rojo); }
-.galeria__frase-linea--naranja { color: var(--naranja); }
-.galeria__frase-linea--morado { color: var(--morado); }
 .galeria__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1275,17 +1282,6 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   line-height: 1.3;
   color: var(--crema);
   word-break: break-word;
-}
-
-/* "Hablemos de tu evento" (eventos.html) reusa la estética de .contacto —
-   3 tiles en vez de 2, con el mismo truco que "Escoge tu salsa" para que
-   el último no quede huérfano en mobile: ocupa el ancho completo en vez
-   de flotar solo. */
-.eventos-cta__grid { grid-template-columns: 1fr 1fr; }
-.eventos-cta__grid .contacto__tile:last-child { grid-column: 1 / -1; }
-@media (min-width: 640px) {
-  .eventos-cta__grid { grid-template-columns: repeat(3, 1fr); }
-  .eventos-cta__grid .contacto__tile:last-child { grid-column: auto; }
 }
 
 /* ==========================================================================
