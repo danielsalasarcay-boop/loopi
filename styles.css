@@ -1039,14 +1039,97 @@ body.no-scroll {
 .paso__icono--rojo { background: var(--rojo); box-shadow: var(--shadow-rojo); }
 .paso__icono--naranja { background: var(--naranja); color: var(--negro); }
 .paso__icono--morado { background: var(--morado); box-shadow: var(--shadow-morado); }
+.paso__icono--negro { background: var(--negro); }
+
+/* ==========================================================================
+   Eventos — hero, features y "Hablemos de tu evento"
+   ========================================================================== */
+/* Primer bloque bajo el header fijo (antes le tocaba a .galeria--pagina) —
+   mismo respiro que .hero le da al header transparente/sólido. */
+.eventos-hero {
+  padding-top: calc(var(--header-height) + var(--space-xl) + env(safe-area-inset-top, 0px));
+  padding-bottom: var(--space-2xl);
+  background: var(--morado);
+  color: var(--crema);
+  text-align: center;
+}
+.eventos-hero__eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: var(--naranja);
+  margin-bottom: var(--space-xs);
+}
+.eventos-hero__title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 1.1;
+  max-width: 18ch;
+  margin-inline: auto;
+  margin-bottom: var(--space-sm);
+}
+.eventos-hero__lead {
+  font-size: 1.05rem;
+  max-width: 46ch;
+  margin-inline: auto;
+  margin-bottom: var(--space-lg);
+  opacity: 0.92;
+}
+.eventos-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+.eventos-hero__frase {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+.eventos-hero__frase-linea--naranja { color: var(--naranja); }
+.eventos-hero__frase-linea--crema { opacity: 0.7; }
+
+.eventos-features { padding-block: var(--space-2xl); background: #fff; text-align: center; }
+.eventos-features .section-subtitle { margin-inline: auto; }
+.eventos-features__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg) var(--space-sm);
+  max-width: 760px;
+  margin-inline: auto;
+  margin-top: var(--space-lg);
+}
+@media (min-width: 700px) {
+  .eventos-features__grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-lg) var(--space-md); }
+}
+.eventos-features__item { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
+.eventos-features__item h3 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+.eventos-features__item p { color: var(--texto-muted); font-size: 0.82rem; line-height: 1.3; max-width: 22ch; }
+
+.contacto .section-subtitle { color: var(--crema); opacity: 0.85; }
+.eventos-cta .contacto__info { max-width: 640px; }
+.eventos-cta__subtitle { margin-inline: auto; }
 
 /* ==========================================================================
    Galería + lightbox
    ========================================================================== */
 .galeria { padding-block: var(--space-2xl); background: var(--crema); text-align: center; }
-/* Página propia de galería: primer elemento bajo el header fijo, necesita
-   el mismo respiro que .hero le da al header transparente/sólido. */
-.galeria--pagina { padding-top: calc(var(--header-height) + var(--space-xl) + env(safe-area-inset-top, 0px)); }
 .galeria .section-subtitle { margin-inline: auto; }
 /* Las 3 frases que antes vivían en el carrusel "Best Lumpias in
    Town" (ahora es una foto fija) — acá solo el texto, sin fotos. */
@@ -1192,6 +1275,17 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   line-height: 1.3;
   color: var(--crema);
   word-break: break-word;
+}
+
+/* "Hablemos de tu evento" (eventos.html) reusa la estética de .contacto —
+   3 tiles en vez de 2, con el mismo truco que "Escoge tu salsa" para que
+   el último no quede huérfano en mobile: ocupa el ancho completo en vez
+   de flotar solo. */
+.eventos-cta__grid { grid-template-columns: 1fr 1fr; }
+.eventos-cta__grid .contacto__tile:last-child { grid-column: 1 / -1; }
+@media (min-width: 640px) {
+  .eventos-cta__grid { grid-template-columns: repeat(3, 1fr); }
+  .eventos-cta__grid .contacto__tile:last-child { grid-column: auto; }
 }
 
 /* ==========================================================================

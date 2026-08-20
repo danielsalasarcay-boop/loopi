@@ -152,6 +152,10 @@ function mensajeGenerico() {
   return `Hola loopi! 👋 Quiero hacer un pedido de mini lumpias.`;
 }
 
+function mensajeEvento() {
+  return `Hola loopi! 👋 Quiero cotizar mini lumpias para un evento. ¿Me cuentan las opciones para catering?`;
+}
+
 // items ya viene filtrado a cantidad > 0. El mensaje lleva precio por línea
 // y el total, para que el pedido llegue completo por WhatsApp.
 function mensajePedido(items) {
@@ -186,7 +190,7 @@ const ICONS = {
 function initHeader() {
   const header = document.querySelector('.header');
   if (!header) return;
-  // Páginas sin hero rojo debajo del header (ej. galeria.html) necesitan el
+  // Páginas sin hero rojo debajo del header (ej. eventos.html) necesitan el
   // header sólido desde el arranque; el texto crema del estado transparente
   // se vuelve invisible sobre un fondo claro.
   const forzarSolido = document.body.classList.contains('header--forzar-solido');
@@ -230,6 +234,12 @@ function initHeader() {
 function initBotonesGenericos() {
   document.querySelectorAll('[data-wa-generico]').forEach((el) => {
     el.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
+  });
+  document.querySelectorAll('[data-wa-evento]').forEach((el) => {
+    el.setAttribute('href', buildWhatsAppUrl(mensajeEvento()));
+  });
+  document.querySelectorAll('[data-email-evento]').forEach((el) => {
+    el.setAttribute('href', `mailto:${CONFIG.contacto.email}`);
   });
 }
 
@@ -331,7 +341,7 @@ function renderMenu() {
    Pedido / Carrito — estado compartido y persistente (localStorage),
    igual al sistema de "Mi pedido" de Quality Bikes: botón flotante
    con contador, panel deslizable, mismo pedido disponible en
-   cualquier página del sitio (index.html y galeria.html).
+   cualquier página del sitio (index.html y eventos.html).
    ============================================================ */
 const PEDIDO_STORAGE_KEY = 'loopi-pedido-v1';
 
@@ -645,6 +655,16 @@ function initContacto() {
   document.querySelector('[data-whatsapp-link]')?.setAttribute('href', buildWhatsAppUrl(mensajeGenerico()));
   elEmail.textContent = CONFIG.contacto.email;
   document.querySelector('[data-email-link]')?.setAttribute('href', `mailto:${CONFIG.contacto.email}`);
+}
+
+/* ============================================================
+   Eventos — datos de contacto del bloque "Hablemos de tu evento"
+   ============================================================ */
+function initEventosContacto() {
+  const elWhatsapp = document.querySelector('#evento-dato-whatsapp');
+  const elEmail = document.querySelector('#evento-dato-correo');
+  if (elWhatsapp) elWhatsapp.textContent = `+${CONFIG.whatsapp.numero}`;
+  if (elEmail) elEmail.textContent = CONFIG.contacto.email;
 }
 
 /* ============================================================
@@ -1022,6 +1042,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGaleria();
   initInstagram();
   initContacto();
+  initEventosContacto();
   initFooter();
   initScrollSuave();
   initRevealOnScroll();
