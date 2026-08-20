@@ -23,7 +23,7 @@ const CONFIG = {
   contacto: {
     horario: 'Lunes a domingo, 9:00am a 6:00pm',
     zonaDelivery: 'Caracas (los costos varían entre 3-4$ dependiendo de tu zona)',
-    metodosPago: 'Pago móvil, Zelle, Efectivo, Zinli, Binance',
+    metodosPago: 'Pago móvil, Zelle, Efectivo, Binance',
     email: 'Loopicaracas@gmail.com',
   },
 };
