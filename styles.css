@@ -1242,11 +1242,11 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   justify-content: center;
   line-height: 1;
 }
-/* Mismo lenguaje que los botones flotantes fijos (círculo sólido, ícono
-   crema) en vez del sticker negro con borde neón que tenía antes — así
-   Instagram usa el degradé de marca (naranja→rojo→morado) en lugar de un
-   rosa/fucsia fuera de paleta, y ambos íconos quedan consistentes con el
-   resto del sitio. */
+/* Mismos colores de marca que los botones flotantes fijos (verde WhatsApp,
+   degradé naranja→rojo→morado en Instagram en vez del rosa/fucsia fuera de
+   paleta que tenía antes) pero con otra silueta — cuadrado redondeado en
+   vez de círculo, con un anillo crema y una leve rotación al hover — para
+   que no se lean como el mismo botón duplicado en dos lugares. */
 .footer__social { display: flex; gap: var(--space-md); }
 .footer__social a {
   width: 46px;
@@ -1254,15 +1254,16 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   color: var(--crema);
-  box-shadow: var(--shadow-suave);
+  box-shadow: var(--shadow-suave), 0 0 0 2px rgba(255, 248, 238, 0.35);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
-.footer__social svg { width: 22px; height: 22px; }
-.footer__social a:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 22px rgba(17, 17, 17, 0.3); }
+.footer__social svg { width: 21px; height: 21px; }
 .footer__social a[data-wa-generico] { background: #25D366; }
 .footer__social a[data-ig-link] { background: radial-gradient(circle at 30% 30%, var(--naranja) 0%, var(--rojo) 45%, var(--morado) 100%); }
+.footer__social a[data-wa-generico]:hover { transform: translateY(-3px) rotate(-4deg) scale(1.06); }
+.footer__social a[data-ig-link]:hover { transform: translateY(-3px) rotate(4deg) scale(1.06); }
 .footer__datos { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-size: 0.95rem; opacity: 0.85; }
 .footer__copy { font-size: 0.85rem; opacity: 0.6; }
 
