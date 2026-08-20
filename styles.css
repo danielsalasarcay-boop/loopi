@@ -686,7 +686,16 @@ body.no-scroll {
    completo dejaba franjas negras enormes a los lados en pantallas
    grandes. Con un ancho tope + sombra se lee como una foto a propósito,
    nunca se recorta y nunca queda más alta que Contacto. */
-.mira-cerca { padding-block: var(--space-2xl); background: #fff; display: flex; justify-content: center; }
+.mira-cerca {
+  padding-block: var(--space-2xl);
+  padding-inline: var(--space-lg);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
 .mira-cerca__img {
   max-width: min(100%, 720px);
   max-height: 480px;
@@ -696,8 +705,24 @@ body.no-scroll {
   border-radius: var(--radius-card);
   box-shadow: 0 20px 50px rgba(17, 17, 17, 0.25);
 }
+.mira-cerca__frase {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+}
+.mira-cerca__frase-linea {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.15;
+  color: var(--negro);
+}
+.mira-cerca__frase-linea--morado { color: var(--morado); }
+.mira-cerca__frase-linea--naranja { color: var(--naranja); }
 @media (max-width: 600px) {
   .mira-cerca { padding-block: var(--space-lg); padding-inline: var(--space-md); }
+  .mira-cerca__frase-linea { font-size: clamp(1.4rem, 7vw, 2rem); text-align: center; }
 }
 
 /* ==========================================================================
