@@ -39,11 +39,11 @@ function claveItem(id, tamano) {
 // Salsas — se agregan al pedido como item aparte, $1 c/u. El precio no se
 // muestra junto al nombre en "Escoge tu salsa", solo dentro del carrito.
 const SALSAS = [
-  { id: 'soya', nombre: 'Soya' },
-  { id: 'agridulce', nombre: 'Agridulce' },
-  { id: 'ponzu', nombre: 'Ponzu' },
-  { id: 'mango-chutney', nombre: 'Mango Chutney' },
-  { id: 'thai', nombre: 'Thai' },
+  { id: 'soya', nombre: 'Soya', color: 'negro' },
+  { id: 'agridulce', nombre: 'Agridulce', color: 'naranja' },
+  { id: 'ponzu', nombre: 'Ponzu', color: 'morado' },
+  { id: 'mango-chutney', nombre: 'Mango Chutney', color: 'rojo' },
+  { id: 'thai', nombre: 'Thai', color: 'naranja' },
 ];
 const PRECIO_SALSA = 1;
 
@@ -444,6 +444,14 @@ function actualizarPedidoUI() {
   guardarPedido();
 }
 
+// Resalta la pill de la salsa en "Escoge tu salsa" cuando su cantidad
+// pasa a >0 (o la apaga al volver a 0) — feedback visual de selección.
+function marcarSalsaActiva(clave) {
+  const item = document.querySelector(`[data-clave-cantidad="${clave}"]`)?.closest('.salsa__item');
+  if (!item) return;
+  item.classList.toggle('is-active', (statePedido.cantidades[clave] || 0) > 0);
+}
+
 function initPedido() {
   const haySecciones = document.querySelector('[data-pedido-badge]') || document.querySelector('[data-carrito-lista]');
   if (!haySecciones) return;
@@ -460,6 +468,7 @@ function initPedido() {
       document.querySelectorAll(`[data-clave-cantidad="${clave}"]`).forEach((el) => {
         el.textContent = String(statePedido.cantidades[clave]);
       });
+      marcarSalsaActiva(clave);
       actualizarPedidoUI();
       return;
     }
@@ -470,6 +479,7 @@ function initPedido() {
       document.querySelectorAll(`[data-clave-cantidad="${clave}"]`).forEach((el) => {
         el.textContent = '0';
       });
+      marcarSalsaActiva(clave);
       actualizarPedidoUI();
       return;
     }
@@ -524,6 +534,7 @@ function initCarritoFlotante() {
     vaciar.addEventListener('click', () => {
       Object.keys(statePedido.cantidades).forEach((clave) => { statePedido.cantidades[clave] = 0; });
       document.querySelectorAll('[data-clave-cantidad]').forEach((el) => { el.textContent = '0'; });
+      document.querySelectorAll('.salsa__item.is-active').forEach((el) => { el.classList.remove('is-active'); });
       actualizarPedidoUI();
     });
   }
@@ -542,7 +553,8 @@ function renderSalsas() {
     const clave = claveSalsa(salsa.id);
     const cantidad = statePedido.cantidades[clave] || 0;
     return `
-      <div class="salsa__item">
+      <div class="salsa__item${cantidad > 0 ? ' is-active' : ''}" style="--salsa-color: var(--${salsa.color})">
+        <span class="salsa__swatch" aria-hidden="true"></span>
         <span class="salsa__nombre">${salsa.nombre}</span>
         <div class="stepper salsa__stepper">
           <button type="button" class="stepper__btn" data-accion="menos" data-clave="${clave}" aria-label="Quitar salsa ${salsa.nombre}">${ICONS.minus}</button>

@@ -752,23 +752,46 @@ body.no-scroll {
    (título + kicker + carrusel) es angosto, no ocupa el centro entero
    como en el footer, así que no hace falta despejarle el medio. */
 .salsas { padding-block: var(--space-2xl); background: #fff; text-align: center; }
+/* Grid de 2 columnas (ancho natural por contenido, no estirado) en vez de
+   flex-wrap: con 5 salsas, flex-wrap dejaba la última ("Thai") flotando
+   sola y descentrada en su propia fila. Acá la última pill se declara
+   explícitamente a ancho completo y centrada — se lee como un cierre a
+   propósito, no como un sobrante. En mobile angosto baja a 1 columna. */
 .salsas__grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
   justify-content: center;
-  gap: var(--space-sm);
+  justify-items: center;
+  gap: var(--space-sm) var(--space-md);
   max-width: 640px;
   margin-inline: auto;
   margin-top: var(--space-lg);
+}
+@media (min-width: 460px) {
+  .salsas__grid { grid-template-columns: repeat(2, max-content); }
+  .salsa__item:last-child { grid-column: 1 / -1; }
 }
 .salsa__item {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
   border-radius: var(--radius-pill);
   background: var(--crema);
   border: 1px solid rgba(17, 17, 17, 0.08);
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+.salsa__item.is-active {
+  border-color: var(--salsa-color, var(--negro));
+  background: color-mix(in srgb, var(--salsa-color, var(--negro)) 14%, var(--crema));
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--salsa-color, var(--negro)) 30%, transparent);
+}
+.salsa__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--salsa-color, var(--negro));
+  flex-shrink: 0;
 }
 .salsa__nombre {
   font-family: var(--font-heading);
