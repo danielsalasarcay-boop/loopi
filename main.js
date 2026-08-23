@@ -788,8 +788,7 @@ initPreloader();
    al rojo. El slogan "Golden. Crispy. Premium." pasa de naranja a
    morado en el mismo recorrido, de forma lineal. Progreso 0–1
    relativo al alto "de sobra" del envoltorio (offsetHeight menos
-   una pantalla) — igual que initLumpia3D, porque .hero también usa
-   el patrón envoltorio-alto + position:sticky.
+   una pantalla), con position:sticky.
    ============================================================ */
 function initHeroColorShift() {
   const hero = document.querySelector('#hero');
@@ -882,140 +881,6 @@ function initLluviaLumpias() {
 }
 
 /* ============================================================
-   Lumpia 3D — el círculo crece y pierde el borde mientras el
-   fondo se revela, todo atado al progreso de scroll dentro de
-   la sección. Sin GSAP ni Lenis: solo transform vía rAF.
-   ============================================================ */
-function initLumpia3D() {
-  const section = document.querySelector('#lumpia3d');
-  if (!section || prefersReducedMotion()) return;
-
-  const bg = section.querySelector('.lumpia3d__bg');
-  const content = section.querySelector('.lumpia3d__content');
-  const porthole = section.querySelector('.lumpia3d__porthole');
-  const revealText = section.querySelector('.lumpia3d__reveal-text');
-  const humo = initHumoLumpia3D();
-  let humoActivo = false;
-
-  let ticking = false;
-
-  const actualizar = () => {
-    ticking = false;
-    const rect = section.getBoundingClientRect();
-    const distanciaTotal = section.offsetHeight - window.innerHeight;
-    if (distanciaTotal <= 0) return;
-
-    const progreso = Math.min(1, Math.max(0, -rect.top / distanciaTotal));
-
-    const salidaTexto = Math.min(1, progreso / 0.35);
-    const crecimiento = Math.min(1, progreso / 0.75);
-    const revelado = Math.min(1, Math.max(0, (progreso - 0.3) / 0.5));
-
-    content.style.opacity = String(1 - salidaTexto);
-    content.style.transform = `translateY(${salidaTexto * -30}px)`;
-
-    const escala = 1 + crecimiento * 7;
-    porthole.style.transform = `scale(${escala})`;
-    porthole.style.borderRadius = `${50 - crecimiento * 50}%`;
-
-    bg.style.opacity = String(revelado);
-    bg.style.transform = `scale(${1.08 - revelado * 0.08})`;
-
-    revealText.style.opacity = String(revelado);
-
-    // El humo recién tiene sentido una vez que la foto de la lumpia se
-    // reveló — antes de eso solo se ve "Mira de cerca" sin comida en
-    // pantalla, así que no debe aparecer. enPantalla evita que se quede
-    // encendido para siempre una vez que la sección ya quedó tapada atrás
-    // (revelado se queda en 1 aunque hayas seguido bajando).
-    if (humo) {
-      const enPantalla = rect.bottom > 0 && rect.top < window.innerHeight;
-      const mostrarHumo = enPantalla && revelado > 0.4;
-      if (mostrarHumo && !humoActivo) {
-        humo.iniciar();
-        humoActivo = true;
-      } else if (!mostrarHumo && humoActivo) {
-        humo.detener();
-        humoActivo = false;
-      }
-    }
-  };
-
-  const onScroll = () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(actualizar);
-    }
-  };
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  actualizar();
-}
-
-/* ============================================================
-   Humo de las lumpias — vapor flotando dentro de #lumpia3d.
-   Cada partícula es una imagen de humo con transparencia real
-   (ver comentario de .lumpia3d__vapor en styles.css) que sube, se
-   curva de lado a lado, gira suave y se desvanece — mismo patrón
-   que initLluviaLumpias, pero en loop continuo mientras dure.
-   No decide sola cuándo prender/apagar: devuelve {iniciar,
-   detener} y es initLumpia3D quien los llama, atado al progreso
-   real de scroll (recién cuando la foto se reveló, no antes ni
-   una vez que la sección ya quedó tapada).
-   ============================================================ */
-function initHumoLumpia3D() {
-  const contenedor = document.querySelector('#lumpia3d-humo');
-  if (!contenedor || prefersReducedMotion()) return null;
-
-  const SPRITES = ['./img/3d/vapor-humo-01.webp', './img/3d/vapor-humo-02.webp'];
-  // Espaciado para que casi nunca haya dos a la vez: un detalle discreto que
-  // se nota si te fijás, no un efecto que compite con la foto del producto.
-  const INTERVALO_MS = 3400;
-
-  const crearVapor = () => {
-    const img = document.createElement('img');
-    img.src = SPRITES[Math.floor(Math.random() * SPRITES.length)];
-    img.alt = '';
-    img.className = 'lumpia3d__vapor';
-
-    // Chico, tenue y algo desenfocado a propósito — un hilo fino de vapor
-    // real, no una columna de humo pidiendo atención.
-    const ancho = 46 + Math.random() * 38;
-    const izquierda = 36 + Math.random() * 28;
-    const duracion = 7.5 + Math.random() * 3;
-    const deriva = (Math.random() > 0.5 ? 1 : -1) * (22 + Math.random() * 28);
-    const rotacion = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.random() * 6);
-    const opacidadMax = 0.16 + Math.random() * 0.12;
-    const nitidez = 0.7 + Math.random() * 1.2;
-
-    img.style.width = `${ancho}px`;
-    img.style.left = `${izquierda}%`;
-    img.style.setProperty('--vapor-drift', `${deriva}px`);
-    img.style.setProperty('--vapor-rot', `${rotacion}deg`);
-    img.style.setProperty('--vapor-opacidad', String(opacidadMax));
-    img.style.setProperty('--vapor-blur', `${nitidez}px`);
-    img.style.animationDuration = `${duracion}s`;
-
-    contenedor.appendChild(img);
-    img.addEventListener('animationend', () => img.remove());
-  };
-
-  let intervalo = null;
-  const iniciar = () => {
-    if (intervalo) return;
-    crearVapor();
-    intervalo = setInterval(crearVapor, INTERVALO_MS);
-  };
-  const detener = () => {
-    clearInterval(intervalo);
-    intervalo = null;
-  };
-
-  return { iniciar, detener };
-}
-
-/* ============================================================
    Init general
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -1023,7 +888,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initBotonesGenericos();
   initHeroColorShift();
   initLluviaLumpias();
-  initLumpia3D();
   renderSalsas();
   renderMenu();
   initSelectorTamano();
