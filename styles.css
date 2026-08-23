@@ -1272,7 +1272,8 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
 .carrito-btn__badge[hidden],
 .header__nav-badge[hidden],
 .mobile-nav__badge[hidden],
-.footer__nav-badge[hidden] {
+.footer__nav-badge[hidden],
+.carrito-entrega__zonas[hidden] {
   display: none;
 }
 
@@ -1341,6 +1342,79 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   flex-direction: column;
   gap: var(--space-sm);
 }
+
+/* Pick up / Delivery — sutil a propósito: un toggle chico arriba de los
+   totales, igual de discreto que el resto del carrito. Pick up no
+   necesita nada más; al elegir Delivery se abre la lista de zonas
+   (mismo patrón visual que un radio-list, sin nada llamativo). */
+.carrito-entrega {
+  flex-shrink: 0;
+  padding: 0 var(--space-md) var(--space-sm);
+}
+.carrito-entrega__toggle {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  background: rgba(17, 17, 17, 0.06);
+  border-radius: var(--radius-pill);
+}
+.carrito-entrega__btn {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  color: var(--texto-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.carrito-entrega__btn.is-active { background: var(--negro); color: var(--crema); }
+.carrito-entrega__zonas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.carrito-entrega__zona {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: rgba(17, 17, 17, 0.03);
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+.carrito-entrega__zona:hover { background: rgba(17, 17, 17, 0.07); }
+.carrito-entrega__zona-check {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(17, 17, 17, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.carrito-entrega__zona.is-active .carrito-entrega__zona-check {
+  border-color: var(--negro);
+  background: var(--negro);
+}
+.carrito-entrega__zona.is-active .carrito-entrega__zona-check::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--crema);
+}
+.carrito-entrega__zona-nombre { flex: 1; font-size: 0.82rem; font-weight: 600; }
+.carrito-entrega__zona-precio { font-family: var(--font-heading); font-size: 0.8rem; color: var(--texto-muted); }
+.carrito-entrega__zona.is-active .carrito-entrega__zona-precio { color: var(--negro); }
+
+.carrito-envio-resumen { font-size: 0.8rem; color: var(--texto-muted); }
 
 .carrito-panel__footer {
   padding: var(--space-md);

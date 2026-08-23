@@ -51,6 +51,24 @@ function claveSalsa(id) {
   return `salsa-${id}`;
 }
 
+// Zonas de delivery — cada una con su costo fijo en $. Pick up no tiene
+// costo ni requiere elegir nada más.
+const ZONAS_DELIVERY = [
+  { id: 'baruta', nombre: 'Baruta', costo: 3 },
+  { id: 'chacao', nombre: 'Chacao', costo: 3 },
+  { id: 'hatillo', nombre: 'El Hatillo', costo: 3 },
+  { id: 'libertador', nombre: 'Libertador', costo: 4 },
+  { id: 'sucre', nombre: 'Sucre', costo: 4 },
+];
+
+// Costo de envío según el método/zona elegidos — 0 en pick up o si eligió
+// delivery pero todavía no escogió zona.
+function calcularEnvio(entrega) {
+  if (!entrega || entrega.metodo !== 'delivery' || !entrega.zonaId) return 0;
+  const zona = ZONAS_DELIVERY.find((z) => z.id === entrega.zonaId);
+  return zona ? zona.costo : 0;
+}
+
 /* ============================================================
    MENU — catálogo de sabores. Agregar un sabor nuevo es
    agregar una línea aquí; el HTML se genera solo.
@@ -156,16 +174,26 @@ function mensajeEvento() {
   return `Hola loopi! 👋 Quiero cotizar mini lumpias para un evento. ¿Me cuentan las opciones para catering?`;
 }
 
-// items ya viene filtrado a cantidad > 0. El mensaje lleva precio por línea
-// y el total, para que el pedido llegue completo por WhatsApp.
-function mensajePedido(items) {
+// items ya viene filtrado a cantidad > 0. El mensaje lleva precio por línea,
+// el método de entrega elegido y el total (con envío incluido si aplica),
+// para que el pedido llegue completo por WhatsApp.
+function mensajePedido(items, entrega) {
   const lineas = items
     .map((i) => i.categoria === 'salsa'
       ? `• ${i.cantidad}x Salsa ${i.nombre} — $${i.cantidad * i.precioUnit}`
       : `• ${i.cantidad}x Empaque de ${i.tamano} — ${i.nombre} — $${i.cantidad * i.precioUnit}`)
     .join('\n');
-  const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
-  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\nTotal: $${total}\n\n¿Me confirman disponibilidad, forma de pago y costo del delivery?`;
+  const itemsTotal = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
+
+  const zona = entrega && entrega.zonaId ? ZONAS_DELIVERY.find((z) => z.id === entrega.zonaId) : null;
+  const envio = calcularEnvio(entrega);
+  let lineaEntrega = 'Entrega: Pick up (sin costo)';
+  if (entrega && entrega.metodo === 'delivery') {
+    lineaEntrega = zona ? `Entrega: Delivery a ${zona.nombre} — $${envio}` : 'Entrega: Delivery (zona por confirmar)';
+  }
+
+  const total = itemsTotal + envio;
+  return `Hola loopi! 👋 Quiero hacer este pedido:\n\n${lineas}\n\n${lineaEntrega}\n\nTotal: $${total}\n\n¿Me confirman disponibilidad y forma de pago?`;
 }
 
 /* ============================================================
@@ -365,7 +393,10 @@ function guardarPedido() {
 }
 
 const pedidoGuardado = cargarPedidoGuardado();
-const statePedido = { cantidades: {} };
+const entregaGuardada = pedidoGuardado && pedidoGuardado.entrega;
+const metodoGuardado = entregaGuardada && entregaGuardada.metodo === 'delivery' ? 'delivery' : 'pickup';
+const zonaGuardada = entregaGuardada && ZONAS_DELIVERY.some((z) => z.id === entregaGuardada.zonaId) ? entregaGuardada.zonaId : null;
+const statePedido = { cantidades: {}, entrega: { metodo: metodoGuardado, zonaId: zonaGuardada } };
 MENU.forEach((item) => {
   TAMANOS.forEach((tamano) => {
     const clave = claveItem(item.id, tamano);
@@ -421,12 +452,19 @@ function renderLineaCarrito(i) {
 function actualizarPedidoUI() {
   const items = itemsDelPedido();
   const unidades = items.reduce((sum, i) => sum + i.cantidad, 0);
-  const total = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
+  const itemsTotal = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
+  const envio = calcularEnvio(statePedido.entrega);
+  const total = itemsTotal + envio;
   const hayItems = unidades > 0;
-  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(items)) : '#';
+  const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(items, statePedido.entrega)) : '#';
 
   document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
   document.querySelectorAll('[data-pedido-total]').forEach((el) => { el.textContent = `$${total}`; });
+  document.querySelectorAll('[data-envio-resumen]').forEach((el) => {
+    const zona = envio > 0 ? ZONAS_DELIVERY.find((z) => z.id === statePedido.entrega.zonaId) : null;
+    el.textContent = zona ? `Envío a ${zona.nombre}: $${envio}` : '';
+    el.hidden = !zona;
+  });
   document.querySelectorAll('[data-pedido-vacio]').forEach((el) => { el.hidden = hayItems; });
   document.querySelectorAll('[data-pedido-contenido]').forEach((el) => { el.hidden = !hayItems; });
   document.querySelectorAll('[data-pedido-whatsapp]').forEach((btn) => {
@@ -462,10 +500,39 @@ function marcarSalsaActiva(clave) {
   item.classList.toggle('is-active', (statePedido.cantidades[clave] || 0) > 0);
 }
 
+// Si el panel de zonas está desplegado — no se persiste (siempre arranca
+// cerrado al recargar), solo controla la vista mientras se usa el carrito.
+// Se abre al entrar a Delivery, se cierra apenas se elige una zona (para
+// volver a ver el resto del pedido) y se puede reabrir tocando Delivery
+// de nuevo si hace falta cambiar de zona.
+let entregaZonasAbiertas = false;
+
+// Pinta las filas de zona (una vez por contenedor) marcando la activa, y
+// sincroniza el toggle Pick up/Delivery + si el panel de zonas se muestra.
+// Se llama de nuevo tras cada click de entrega para reflejar el estado.
+function actualizarEntregaUI() {
+  document.querySelectorAll('[data-entrega-metodo]').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.entregaMetodo === statePedido.entrega.metodo);
+  });
+  document.querySelectorAll('[data-entrega-zonas]').forEach((cont) => {
+    cont.hidden = !(statePedido.entrega.metodo === 'delivery' && entregaZonasAbiertas);
+    cont.innerHTML = ZONAS_DELIVERY.map((z) => `
+      <button type="button" class="carrito-entrega__zona${statePedido.entrega.zonaId === z.id ? ' is-active' : ''}" data-entrega-zona="${z.id}">
+        <span class="carrito-entrega__zona-check" aria-hidden="true"></span>
+        <span class="carrito-entrega__zona-nombre">${z.nombre}</span>
+        <span class="carrito-entrega__zona-precio">$${z.costo}</span>
+      </button>`).join('');
+  });
+}
+
 function initPedido() {
   const haySecciones = document.querySelector('[data-pedido-badge]') || document.querySelector('[data-carrito-lista]');
   if (!haySecciones) return;
 
+  // Si quedó en Delivery sin zona elegida (de una visita anterior), arranca
+  // abierto para que termine de elegir; si ya tiene zona, arranca cerrado.
+  entregaZonasAbiertas = statePedido.entrega.metodo === 'delivery' && !statePedido.entrega.zonaId;
+  actualizarEntregaUI();
   actualizarPedidoUI();
 
   // Delegado en document: cubre los steppers de cada tarjeta del menú.
@@ -490,6 +557,24 @@ function initPedido() {
         el.textContent = '0';
       });
       marcarSalsaActiva(clave);
+      actualizarPedidoUI();
+      return;
+    }
+    const btnEntregaMetodo = e.target.closest('[data-entrega-metodo]');
+    if (btnEntregaMetodo) {
+      statePedido.entrega.metodo = btnEntregaMetodo.dataset.entregaMetodo;
+      // Tocar "Delivery" siempre abre el panel — así también sirve para
+      // reabrirlo y cambiar de zona si ya había una elegida.
+      entregaZonasAbiertas = statePedido.entrega.metodo === 'delivery';
+      actualizarEntregaUI();
+      actualizarPedidoUI();
+      return;
+    }
+    const btnEntregaZona = e.target.closest('[data-entrega-zona]');
+    if (btnEntregaZona) {
+      statePedido.entrega.zonaId = btnEntregaZona.dataset.entregaZona;
+      entregaZonasAbiertas = false;
+      actualizarEntregaUI();
       actualizarPedidoUI();
       return;
     }
@@ -545,6 +630,9 @@ function initCarritoFlotante() {
       Object.keys(statePedido.cantidades).forEach((clave) => { statePedido.cantidades[clave] = 0; });
       document.querySelectorAll('[data-clave-cantidad]').forEach((el) => { el.textContent = '0'; });
       document.querySelectorAll('.salsa__item.is-active').forEach((el) => { el.classList.remove('is-active'); });
+      statePedido.entrega = { metodo: 'pickup', zonaId: null };
+      entregaZonasAbiertas = false;
+      actualizarEntregaUI();
       actualizarPedidoUI();
     });
   }
