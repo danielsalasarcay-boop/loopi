@@ -446,6 +446,18 @@ function renderLineaCarrito(i) {
     </div>`;
 }
 
+// El envío se ve como una línea más del pedido (mismo patrón que
+// renderLineaCarrito, con su propio botón de borrar para que el precio
+// quede alineado con el de los items) — en naranja para distinguirla.
+function renderLineaEnvio(zona) {
+  return `
+    <div class="carrito-linea">
+      <span class="carrito-linea__desc">Envío a ${zona.nombre}</span>
+      <strong class="carrito-linea__precio carrito-linea__precio--envio">$${zona.costo}</strong>
+      <button type="button" class="carrito-linea__borrar" data-borrar-envio aria-label="Quitar envío a ${zona.nombre}">${ICONS.trash}</button>
+    </div>`;
+}
+
 // Actualiza unidades, total, resumen del carrito (solo lo ya agregado, sin
 // pedir seleccionar de nuevo) y el botón de WhatsApp en todos los lugares
 // de la página que los usen (data-attributes, no IDs fijos).
@@ -460,11 +472,6 @@ function actualizarPedidoUI() {
 
   document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
   document.querySelectorAll('[data-pedido-total]').forEach((el) => { el.textContent = `$${total}`; });
-  document.querySelectorAll('[data-envio-resumen]').forEach((el) => {
-    const zona = envio > 0 ? ZONAS_DELIVERY.find((z) => z.id === statePedido.entrega.zonaId) : null;
-    el.textContent = zona ? `Envío a ${zona.nombre}: $${envio}` : '';
-    el.hidden = !zona;
-  });
   document.querySelectorAll('[data-pedido-vacio]').forEach((el) => { el.hidden = hayItems; });
   document.querySelectorAll('[data-pedido-contenido]').forEach((el) => { el.hidden = !hayItems; });
   document.querySelectorAll('[data-pedido-whatsapp]').forEach((btn) => {
@@ -476,8 +483,9 @@ function actualizarPedidoUI() {
     el.textContent = String(unidades);
     el.hidden = unidades === 0;
   });
+  const zonaEnvio = envio > 0 ? ZONAS_DELIVERY.find((z) => z.id === statePedido.entrega.zonaId) : null;
   document.querySelectorAll('[data-carrito-lista]').forEach((cont) => {
-    cont.innerHTML = items.map(renderLineaCarrito).join('');
+    cont.innerHTML = items.map(renderLineaCarrito).join('') + (zonaEnvio ? renderLineaEnvio(zonaEnvio) : '');
   });
 
   document.querySelectorAll('[data-item-unidades]').forEach((el) => {
@@ -500,28 +508,22 @@ function marcarSalsaActiva(clave) {
   item.classList.toggle('is-active', (statePedido.cantidades[clave] || 0) > 0);
 }
 
-// Si el panel de zonas está desplegado — no se persiste (siempre arranca
-// cerrado al recargar), solo controla la vista mientras se usa el carrito.
-// Se abre al entrar a Delivery, se cierra apenas se elige una zona (para
-// volver a ver el resto del pedido) y se puede reabrir tocando Delivery
-// de nuevo si hace falta cambiar de zona.
-let entregaZonasAbiertas = false;
-
-// Pinta las filas de zona (una vez por contenedor) marcando la activa, y
-// sincroniza el toggle Pick up/Delivery + si el panel de zonas se muestra.
-// Se llama de nuevo tras cada click de entrega para reflejar el estado.
+// Sincroniza el toggle Pick up/Delivery y el <select> de zona — nativo a
+// propósito: al elegir Delivery solo aparece un select de una línea (el
+// navegador se encarga del desplegable, no empuja nada del panel), así
+// el pedido nunca pierde espacio ni queda tapado.
 function actualizarEntregaUI() {
   document.querySelectorAll('[data-entrega-metodo]').forEach((btn) => {
     btn.classList.toggle('is-active', btn.dataset.entregaMetodo === statePedido.entrega.metodo);
   });
-  document.querySelectorAll('[data-entrega-zonas]').forEach((cont) => {
-    cont.hidden = !(statePedido.entrega.metodo === 'delivery' && entregaZonasAbiertas);
-    cont.innerHTML = ZONAS_DELIVERY.map((z) => `
-      <button type="button" class="carrito-entrega__zona${statePedido.entrega.zonaId === z.id ? ' is-active' : ''}" data-entrega-zona="${z.id}">
-        <span class="carrito-entrega__zona-check" aria-hidden="true"></span>
-        <span class="carrito-entrega__zona-nombre">${z.nombre}</span>
-        <span class="carrito-entrega__zona-precio">$${z.costo}</span>
-      </button>`).join('');
+  document.querySelectorAll('[data-entrega-zona-select]').forEach((select) => {
+    if (!select.dataset.poblado) {
+      select.innerHTML = `<option value="" disabled>Elige tu zona</option>` +
+        ZONAS_DELIVERY.map((z) => `<option value="${z.id}">${z.nombre} — $${z.costo}</option>`).join('');
+      select.dataset.poblado = 'true';
+    }
+    select.hidden = statePedido.entrega.metodo !== 'delivery';
+    select.value = statePedido.entrega.zonaId || '';
   });
 }
 
@@ -529,11 +531,16 @@ function initPedido() {
   const haySecciones = document.querySelector('[data-pedido-badge]') || document.querySelector('[data-carrito-lista]');
   if (!haySecciones) return;
 
-  // Si quedó en Delivery sin zona elegida (de una visita anterior), arranca
-  // abierto para que termine de elegir; si ya tiene zona, arranca cerrado.
-  entregaZonasAbiertas = statePedido.entrega.metodo === 'delivery' && !statePedido.entrega.zonaId;
   actualizarEntregaUI();
   actualizarPedidoUI();
+
+  document.querySelectorAll('[data-entrega-zona-select]').forEach((select) => {
+    select.addEventListener('change', () => {
+      statePedido.entrega.zonaId = select.value || null;
+      actualizarEntregaUI();
+      actualizarPedidoUI();
+    });
+  });
 
   // Delegado en document: cubre los steppers de cada tarjeta del menú.
   document.addEventListener('click', (e) => {
@@ -560,20 +567,16 @@ function initPedido() {
       actualizarPedidoUI();
       return;
     }
-    const btnEntregaMetodo = e.target.closest('[data-entrega-metodo]');
-    if (btnEntregaMetodo) {
-      statePedido.entrega.metodo = btnEntregaMetodo.dataset.entregaMetodo;
-      // Tocar "Delivery" siempre abre el panel — así también sirve para
-      // reabrirlo y cambiar de zona si ya había una elegida.
-      entregaZonasAbiertas = statePedido.entrega.metodo === 'delivery';
+    const btnBorrarEnvio = e.target.closest('[data-borrar-envio]');
+    if (btnBorrarEnvio) {
+      statePedido.entrega.zonaId = null;
       actualizarEntregaUI();
       actualizarPedidoUI();
       return;
     }
-    const btnEntregaZona = e.target.closest('[data-entrega-zona]');
-    if (btnEntregaZona) {
-      statePedido.entrega.zonaId = btnEntregaZona.dataset.entregaZona;
-      entregaZonasAbiertas = false;
+    const btnEntregaMetodo = e.target.closest('[data-entrega-metodo]');
+    if (btnEntregaMetodo) {
+      statePedido.entrega.metodo = btnEntregaMetodo.dataset.entregaMetodo;
       actualizarEntregaUI();
       actualizarPedidoUI();
       return;
@@ -631,7 +634,6 @@ function initCarritoFlotante() {
       document.querySelectorAll('[data-clave-cantidad]').forEach((el) => { el.textContent = '0'; });
       document.querySelectorAll('.salsa__item.is-active').forEach((el) => { el.classList.remove('is-active'); });
       statePedido.entrega = { metodo: 'pickup', zonaId: null };
-      entregaZonasAbiertas = false;
       actualizarEntregaUI();
       actualizarPedidoUI();
     });

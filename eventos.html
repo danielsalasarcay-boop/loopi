@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=62">
+  <link rel="stylesheet" href="./styles.css?v=64">
 </head>
 <body class="header--forzar-solido">
 
@@ -257,11 +257,10 @@
           <button type="button" class="carrito-entrega__btn" data-entrega-metodo="pickup">Pick up</button>
           <button type="button" class="carrito-entrega__btn" data-entrega-metodo="delivery">Delivery</button>
         </div>
-        <div class="carrito-entrega__zonas" data-entrega-zonas hidden></div>
+        <select class="carrito-entrega__select" data-entrega-zona-select hidden aria-label="Elige tu zona de delivery"></select>
       </div>
 
       <div class="carrito-panel__footer">
-        <p class="carrito-envio-resumen" data-envio-resumen hidden></p>
         <div class="configurador__totales">
           <span><strong data-pedido-unidades>0</strong> unidades</span>
           <span class="configurador__total-precio" data-pedido-total>$0</span>
@@ -284,6 +283,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=43"></script>
+  <script src="./main.js?v=44"></script>
 </body>
 </html>
