@@ -626,14 +626,11 @@ function initGaleria() {
 }
 
 /* ============================================================
-   Instagram — bloque fijo (handle + link) e íconos flotantes
+   Instagram — íconos/enlaces fijos en todo el sitio
    ============================================================ */
 function initInstagram() {
   document.querySelectorAll('[data-ig-link]').forEach((el) => {
     el.setAttribute('href', CONFIG.instagram.url);
-  });
-  document.querySelectorAll('[data-ig-handle]').forEach((el) => {
-    el.textContent = CONFIG.instagram.handle;
   });
 }
 
