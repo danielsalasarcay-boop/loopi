@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&amp;display=swap&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css?v=64">
+  <link rel="stylesheet" href="./styles.css?v=65">
 </head>
 <body class="header--forzar-solido">
 
@@ -257,7 +257,13 @@
           <button type="button" class="carrito-entrega__btn" data-entrega-metodo="pickup">Pick up</button>
           <button type="button" class="carrito-entrega__btn" data-entrega-metodo="delivery">Delivery</button>
         </div>
-        <select class="carrito-entrega__select" data-entrega-zona-select hidden aria-label="Elige tu zona de delivery"></select>
+        <div class="carrito-entrega__zona-wrap" data-entrega-zona-wrap hidden>
+          <button type="button" class="carrito-entrega__zona-trigger" data-entrega-zona-trigger aria-haspopup="listbox" aria-expanded="false">
+            <span data-entrega-zona-label>Elige tu zona</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="carrito-entrega__zona-menu" data-entrega-zona-menu role="listbox" hidden></div>
+        </div>
       </div>
 
       <div class="carrito-panel__footer">
@@ -283,6 +289,6 @@
     </a>
   </div>
 
-  <script src="./main.js?v=44"></script>
+  <script src="./main.js?v=45"></script>
 </body>
 </html>

@@ -1374,16 +1374,60 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 .carrito-entrega__btn.is-active { background: var(--negro); color: var(--crema); }
-.carrito-entrega__select {
+/* Selector de zona propio (no <select> nativo): el picker del sistema
+   operativo no se puede vestir con la marca y en mobile abre una hoja
+   nativa que desentona con todo el resto — este menú flota encima
+   (position:absolute) en vez de empujar nada, así el pedido nunca
+   pierde espacio y el look queda 100% consistente en cualquier equipo. */
+.carrito-entrega__zona-wrap { position: relative; margin-top: 0.4rem; }
+.carrito-entrega__zona-trigger {
   width: 100%;
-  margin-top: 0.4rem;
-  padding: 0.45rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(17, 17, 17, 0.15);
   background: #fff;
   color: var(--negro);
   font-size: 0.82rem;
+  text-align: left;
 }
+.carrito-entrega__zona-trigger svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--texto-muted);
+  transition: transform var(--transition-fast);
+}
+.carrito-entrega__zona-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+.carrito-entrega__zona-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  box-shadow: 0 14px 34px rgba(17, 17, 17, 0.2);
+  overflow: hidden;
+}
+.carrito-entrega__zona-opcion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+.carrito-entrega__zona-opcion + .carrito-entrega__zona-opcion { border-top: 1px solid rgba(17, 17, 17, 0.06); }
+.carrito-entrega__zona-opcion:hover, .carrito-entrega__zona-opcion.is-active { background: rgba(17, 17, 17, 0.06); }
+.carrito-entrega__zona-opcion-precio { font-family: var(--font-heading); color: var(--texto-muted); }
+.carrito-entrega__zona-opcion.is-active .carrito-entrega__zona-opcion-precio { color: var(--naranja); }
 
 .carrito-panel__footer {
   padding: var(--space-md);

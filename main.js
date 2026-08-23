@@ -508,22 +508,38 @@ function marcarSalsaActiva(clave) {
   item.classList.toggle('is-active', (statePedido.cantidades[clave] || 0) > 0);
 }
 
-// Sincroniza el toggle Pick up/Delivery y el <select> de zona — nativo a
-// propósito: al elegir Delivery solo aparece un select de una línea (el
-// navegador se encarga del desplegable, no empuja nada del panel), así
-// el pedido nunca pierde espacio ni queda tapado.
+// Cierra cualquier menú de zona que haya quedado abierto — al elegir una
+// zona, al hacer click afuera, al tocar Escape o al cerrar el carrito.
+function cerrarMenusZona() {
+  document.querySelectorAll('[data-entrega-zona-menu]').forEach((menu) => { menu.hidden = true; });
+  document.querySelectorAll('[data-entrega-zona-trigger]').forEach((btn) => { btn.setAttribute('aria-expanded', 'false'); });
+}
+
+// Sincroniza el toggle Pick up/Delivery y el menú de zona propio (no
+// <select> nativo — el picker del sistema no se puede vestir con la
+// marca y desentona). El menú flota encima (position:absolute) en vez
+// de empujar nada, así el pedido nunca pierde espacio ni queda tapado.
 function actualizarEntregaUI() {
   document.querySelectorAll('[data-entrega-metodo]').forEach((btn) => {
     btn.classList.toggle('is-active', btn.dataset.entregaMetodo === statePedido.entrega.metodo);
   });
-  document.querySelectorAll('[data-entrega-zona-select]').forEach((select) => {
-    if (!select.dataset.poblado) {
-      select.innerHTML = `<option value="" disabled>Elige tu zona</option>` +
-        ZONAS_DELIVERY.map((z) => `<option value="${z.id}">${z.nombre} — $${z.costo}</option>`).join('');
-      select.dataset.poblado = 'true';
+  const zonaActual = statePedido.entrega.zonaId ? ZONAS_DELIVERY.find((z) => z.id === statePedido.entrega.zonaId) : null;
+  document.querySelectorAll('[data-entrega-zona-wrap]').forEach((wrap) => {
+    wrap.hidden = statePedido.entrega.metodo !== 'delivery';
+    const menu = wrap.querySelector('[data-entrega-zona-menu]');
+    if (!menu.dataset.poblado) {
+      menu.innerHTML = ZONAS_DELIVERY.map((z) => `
+        <button type="button" class="carrito-entrega__zona-opcion" role="option" data-entrega-zona="${z.id}">
+          <span>${z.nombre}</span>
+          <span class="carrito-entrega__zona-opcion-precio">$${z.costo}</span>
+        </button>`).join('');
+      menu.dataset.poblado = 'true';
     }
-    select.hidden = statePedido.entrega.metodo !== 'delivery';
-    select.value = statePedido.entrega.zonaId || '';
+    menu.querySelectorAll('[data-entrega-zona]').forEach((opt) => {
+      opt.classList.toggle('is-active', opt.dataset.entregaZona === statePedido.entrega.zonaId);
+    });
+    const label = wrap.querySelector('[data-entrega-zona-label]');
+    label.textContent = zonaActual ? `${zonaActual.nombre} — $${zonaActual.costo}` : 'Elige tu zona';
   });
 }
 
@@ -534,12 +550,8 @@ function initPedido() {
   actualizarEntregaUI();
   actualizarPedidoUI();
 
-  document.querySelectorAll('[data-entrega-zona-select]').forEach((select) => {
-    select.addEventListener('change', () => {
-      statePedido.entrega.zonaId = select.value || null;
-      actualizarEntregaUI();
-      actualizarPedidoUI();
-    });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarMenusZona();
   });
 
   // Delegado en document: cubre los steppers de cada tarjeta del menú.
@@ -577,9 +589,32 @@ function initPedido() {
     const btnEntregaMetodo = e.target.closest('[data-entrega-metodo]');
     if (btnEntregaMetodo) {
       statePedido.entrega.metodo = btnEntregaMetodo.dataset.entregaMetodo;
+      cerrarMenusZona();
       actualizarEntregaUI();
       actualizarPedidoUI();
       return;
+    }
+    const btnZonaTrigger = e.target.closest('[data-entrega-zona-trigger]');
+    if (btnZonaTrigger) {
+      const menu = btnZonaTrigger.parentElement.querySelector('[data-entrega-zona-menu]');
+      const yaAbierto = !menu.hidden;
+      cerrarMenusZona();
+      if (!yaAbierto) {
+        menu.hidden = false;
+        btnZonaTrigger.setAttribute('aria-expanded', 'true');
+      }
+      return;
+    }
+    const btnZonaOpcion = e.target.closest('[data-entrega-zona]');
+    if (btnZonaOpcion) {
+      statePedido.entrega.zonaId = btnZonaOpcion.dataset.entregaZona;
+      cerrarMenusZona();
+      actualizarEntregaUI();
+      actualizarPedidoUI();
+      return;
+    }
+    if (!e.target.closest('[data-entrega-zona-wrap]')) {
+      cerrarMenusZona();
     }
     const btnWa = e.target.closest('[data-pedido-whatsapp]');
     if (btnWa && btnWa.classList.contains('is-disabled')) {
@@ -614,6 +649,7 @@ function initCarritoFlotante() {
     backdrop.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     btns.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    cerrarMenusZona();
     desbloquearScroll();
     btns[0].focus();
   };
