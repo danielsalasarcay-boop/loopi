@@ -891,6 +891,15 @@ function initPreloader() {
     setTimeout(() => {
       el.classList.add('is-hidden');
       desbloquearScroll();
+      // desbloquearScroll restaura el scroll a donde estaba ANTES del
+      // preloader (0 en una carga nueva) — si se llegó con un link tipo
+      // index.html#contacto desde otra página, eso pisaba el salto nativo
+      // del navegador al ancla y la página volvía siempre arriba. Si hay
+      // hash en la URL, se corrige saltando a esa sección recién ahora.
+      if (location.hash) {
+        const destino = document.querySelector(location.hash);
+        if (destino) destino.scrollIntoView();
+      }
       el.addEventListener('transitionend', () => el.remove(), { once: true });
     }, restante);
   };
