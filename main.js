@@ -550,9 +550,11 @@ function initPedido() {
   actualizarEntregaUI();
   actualizarPedidoUI();
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') cerrarMenusZona();
-  });
+  // El Escape del menú de zona se maneja en initCarritoFlotante (junto con
+  // el del panel entero) — un solo listener decide cuál cerrar primero, en
+  // vez de dos escuchando el mismo evento por separado (eso causaba que
+  // ambos cerraran a la vez: el segundo ya no encontraba el menú abierto
+  // porque el primero acababa de cerrarlo en el mismo tick).
 
   // Delegado en document: cubre los steppers de cada tarjeta del menú.
   document.addEventListener('click', (e) => {
@@ -662,7 +664,15 @@ function initCarritoFlotante() {
   if (cerrar) cerrar.addEventListener('click', cerrarPanel);
   backdrop.addEventListener('click', cerrarPanel);
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && panel.classList.contains('is-open')) cerrarPanel();
+    if (e.key !== 'Escape' || !panel.classList.contains('is-open')) return;
+    // Si el menú de zona está abierto, Escape cierra primero ese menú
+    // (overlay más cercano) — recién en un segundo Escape cierra el
+    // carrito entero.
+    if (document.querySelector('[data-entrega-zona-menu]:not([hidden])')) {
+      cerrarMenusZona();
+      return;
+    }
+    cerrarPanel();
   });
   if (vaciar) {
     vaciar.addEventListener('click', () => {
