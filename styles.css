@@ -928,7 +928,7 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   gap: 0.05em;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 .eventos-hero__title-linea {
   font-family: var(--font-heading);
@@ -939,13 +939,6 @@ body.no-scroll {
 }
 .eventos-hero__title-linea--rojo { color: var(--rojo); }
 .eventos-hero__title-linea--naranja { color: var(--naranja); }
-.eventos-hero__lead {
-  font-size: 1.05rem;
-  max-width: 46ch;
-  margin-inline: auto;
-  margin-bottom: var(--space-lg);
-  opacity: 0.92;
-}
 .eventos-hero__ctas {
   display: flex;
   flex-wrap: wrap;
