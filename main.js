@@ -859,31 +859,6 @@ function initRevealOnScroll() {
 }
 
 /* ============================================================
-   JSON-LD FoodEstablishment — generado desde CONFIG
-   ============================================================ */
-function initJsonLd() {
-  const data = {
-    '@context': 'https://schema.org',
-    '@type': 'FoodEstablishment',
-    name: CONFIG.marca.nombre,
-    servesCuisine: 'Lumpias, comida venezolana',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Caracas',
-      addressCountry: 'VE',
-    },
-    telephone: `+${CONFIG.whatsapp.numero}`,
-    openingHours: CONFIG.contacto.horario,
-    url: window.location.href,
-    sameAs: [CONFIG.instagram.url],
-  };
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.textContent = JSON.stringify(data);
-  document.head.appendChild(script);
-}
-
-/* ============================================================
    Pantalla de carga — se oculta cuando la página termina de
    cargar (evento load), con un mínimo visible para que no
    parpadee en conexiones rápidas.
@@ -1041,5 +1016,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initFooter();
   initScrollSuave();
   initRevealOnScroll();
-  initJsonLd();
 });
