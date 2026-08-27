@@ -465,9 +465,9 @@ function actualizarPedidoUI() {
   const items = itemsDelPedido();
   const unidades = items.reduce((sum, i) => sum + i.cantidad, 0);
   const itemsTotal = items.reduce((sum, i) => sum + i.cantidad * i.precioUnit, 0);
-  const envio = calcularEnvio(statePedido.entrega);
-  const total = itemsTotal + envio;
   const hayItems = unidades > 0;
+  const envio = hayItems ? calcularEnvio(statePedido.entrega) : 0;
+  const total = itemsTotal + envio;
   const hrefWhatsapp = hayItems ? buildWhatsAppUrl(mensajePedido(items, statePedido.entrega)) : '#';
 
   document.querySelectorAll('[data-pedido-unidades]').forEach((el) => { el.textContent = String(unidades); });
