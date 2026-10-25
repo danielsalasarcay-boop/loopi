@@ -6,7 +6,7 @@
 # "Quiénes somos" (Términos) y "Responsable" (Privacidad).
 # CONFIRMAR con el dueño: la regla de cancelación (sección 6) y la de entregas fallidas (sección 4).
 
-VERSION = "2026-10-25.3"
+VERSION = "2026-10-25.4"
 WA = '<a href="https://wa.me/584223332505">+58 422-333-2505</a>'
 MAIL = '<a href="mailto:Loopicaracas@gmail.com">Loopicaracas@gmail.com</a>'
 IG = '<a href="https://www.instagram.com/loopi.ccs" rel="noopener">@loopi.ccs</a>'
@@ -78,19 +78,16 @@ T = [
     ("11. Responsabilidad", [
         "Hacemos lo posible para que la información del sitio sea exacta y esté actualizada, pero la disponibilidad y el total de cada pedido solo son definitivos en nuestra confirmación por WhatsApp. Nada de lo aquí escrito limita los derechos que la ley te reconoce como consumidor, que son irrenunciables.",
     ]),
-    ("12. Si nos visitas o contratas desde otro país", [
-        "Nuestros servicios se prestan en Venezuela y se rigen por la ley venezolana. Si usas el sitio o contratas desde otro país, eres responsable de cumplir las leyes de tu país.",
-    ]),
-    ("13. Uso del sitio", [
+    ("12. Uso del sitio", [
         "No está permitido usar el sitio o nuestros canales de contacto con fines ilícitos o fraudulentos, enviar mensajes masivos no solicitados, intentar acceder sin autorización a sus sistemas ni copiar su contenido de forma automatizada.",
     ]),
-    ("14. Acuerdo completo", [
+    ("13. Acuerdo completo", [
         "Estos términos, junto con la confirmación de tu pedido o la propuesta de tu evento, forman todo lo acordado entre las partes. No valen promesas ni acuerdos de palabra que no consten por escrito (correo o WhatsApp).",
     ]),
-    ("15. Ley aplicable y reclamos", [
+    ("14. Ley aplicable y reclamos", [
         "Estos términos se rigen por las leyes de la República Bolivariana de Venezuela. Si tienes un reclamo, escríbenos por WhatsApp o correo y te responderemos en un plazo máximo de 10 días hábiles. También puedes acudir a la Superintendencia Nacional para la Defensa de los Derechos Socioeconómicos (SUNDDE) o a los tribunales competentes. Para cualquier controversia, las partes eligen como domicilio especial la ciudad de Caracas, a cuyos tribunales se someten, sin perjuicio del fuero que la ley reconozca al consumidor.",
     ]),
-    ("16. Cambios", [
+    ("15. Cambios", [
         "Podemos actualizar estos términos. La versión vigente es la publicada en esta página con su fecha; cada pedido se rige por la versión vigente cuando fue confirmado.",
     ]),
 ]
