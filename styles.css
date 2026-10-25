@@ -1178,6 +1178,13 @@ a.contacto__tile:hover, a.contacto__tile:focus-visible {
 .footer__social a[data-ig-link]:hover { transform: translateY(-3px) rotate(4deg) scale(1.06); }
 .footer__datos { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-md); font-size: 0.95rem; opacity: 0.85; }
 .footer__copy { font-size: 0.85rem; opacity: 0.6; }
+.footer__legal a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+/* En teléfono los enlaces legales van debajo del copyright, dentro del colchón inferior del footer: el footer mide lo mismo que antes */
+@media (max-width: 767px) {
+  .footer__copy { position: relative; }
+  .footer__legal { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 4px; white-space: nowrap; }
+  .footer__legal-sep { display: none; }
+}
 
 /* Variante amarilla del footer, solo en la portada — eventos.html conserva
    el morado original. El texto pasa a negro (crema queda ilegible sobre
