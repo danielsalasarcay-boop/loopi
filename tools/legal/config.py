@@ -6,7 +6,7 @@
 # "Quiénes somos" (Términos) y "Responsable" (Privacidad).
 # CONFIRMAR con el dueño: la regla de cancelación (sección 6) y la de entregas fallidas (sección 4).
 
-VERSION = "2026-10-25"
+VERSION = "2026-10-25.2"
 WA = '<a href="https://wa.me/584223332505">+58 422-333-2505</a>'
 MAIL = '<a href="mailto:Loopicaracas@gmail.com">Loopicaracas@gmail.com</a>'
 IG = '<a href="https://www.instagram.com/loopi.ccs" rel="noopener">@loopi.ccs</a>'
@@ -20,6 +20,8 @@ SITE = {
     "home": {"es": "./index.html"},
     "files": {"terms": "terminos.html", "privacy": "privacidad.html", "cookies": "cookies.html"},
     "version": VERSION,
+    # Versión de cada documento (sube solo la del que cambió)
+    "versions": {"terms": VERSION, "privacy": "2026-10-25", "cookies": "2026-10-25"},
     "updated": {"es": "25 de octubre de 2026"},
     "head": '<link rel="icon" type="image/svg+xml" href="./assets/logo/loopi-isotipo.svg">\n'
             '<link rel="icon" href="./favicon.ico" sizes="any">\n'
@@ -43,13 +45,13 @@ T = [
         "Quien hace el pedido debe ser mayor de edad.",
     ]]),
     ("3. Precios y pagos", [[
-        "Los precios publicados están en dólares estadounidenses y pueden pagarse en bolívares a la tasa oficial del Banco Central de Venezuela del día del pago, conforme a la normativa vigente.",
+        "Los precios publicados están en dólares estadounidenses y son referenciales. El precio es el mismo cualquiera sea la moneda de pago: si pagas en bolívares, se calcula a la tasa oficial del Banco Central de Venezuela del día del pago.",
         "Aceptamos los medios de pago indicados en el sitio (pago móvil, Zelle, efectivo y Binance). Los pagos en divisas pueden estar sujetos al Impuesto a las Grandes Transacciones Financieras (IGTF) cuando la ley lo exija.",
         "El total de tu pedido es el que te confirmamos por WhatsApp, con el costo de delivery incluido cuando corresponda.",
     ]]),
     ("4. Entregas", [[
         "Pick up: sin costo, en el lugar y la hora que coordinemos por WhatsApp.",
-        "Delivery: en las zonas de Caracas indicadas en el sitio, con el costo de cada zona. La hora de entrega se coordina por WhatsApp.",
+        "Delivery: en las zonas de Caracas indicadas en el sitio, con el costo de cada zona. La hora de entrega se coordina por WhatsApp y es aproximada: puede variar por tráfico, lluvia u otras causas ajenas a nosotros.",
         "Para el delivery debes darnos una dirección correcta y que haya alguien para recibir. Si la dirección es incorrecta o nadie recibe, coordinaremos una nueva entrega, que puede tener costo adicional.",
     ]]),
     ("5. Alimentos, alérgenos y conservación", [[
@@ -76,10 +78,16 @@ T = [
     ("11. Responsabilidad", [
         "Hacemos lo posible para que la información del sitio sea exacta y esté actualizada, pero la disponibilidad y el total de cada pedido solo son definitivos en nuestra confirmación por WhatsApp. Nada de lo aquí escrito limita los derechos que la ley te reconoce como consumidor, que son irrenunciables.",
     ]),
-    ("12. Ley aplicable y reclamos", [
-        "Estos términos se rigen por las leyes de la República Bolivariana de Venezuela. Si tienes un reclamo, escríbenos por WhatsApp o correo y te responderemos en un plazo máximo de 10 días hábiles. También puedes acudir a la Superintendencia Nacional para la Defensa de los Derechos Socioeconómicos (SUNDDE) o a los tribunales competentes.",
+    ("12. Si nos visitas o contratas desde otro país", [
+        "Nuestros servicios se prestan en Venezuela y se rigen por la ley venezolana. Si usas el sitio o contratas desde otro país, eres responsable de cumplir las leyes de tu país.",
     ]),
-    ("13. Cambios", [
+    ("13. Uso del sitio", [
+        "No está permitido usar el sitio o nuestros canales de contacto con fines ilícitos o fraudulentos, enviar mensajes masivos no solicitados, intentar acceder sin autorización a sus sistemas ni copiar su contenido de forma automatizada.",
+    ]),
+    ("14. Ley aplicable y reclamos", [
+        "Estos términos se rigen por las leyes de la República Bolivariana de Venezuela. Si tienes un reclamo, escríbenos por WhatsApp o correo y te responderemos en un plazo máximo de 10 días hábiles. También puedes acudir a la Superintendencia Nacional para la Defensa de los Derechos Socioeconómicos (SUNDDE) o a los tribunales competentes. Para cualquier controversia, las partes eligen como domicilio especial la ciudad de Caracas, a cuyos tribunales se someten, sin perjuicio del fuero que la ley reconozca al consumidor.",
+    ]),
+    ("15. Cambios", [
         "Podemos actualizar estos términos. La versión vigente es la publicada en esta página con su fecha; cada pedido se rige por la versión vigente cuando fue confirmado.",
     ]),
 ]
