@@ -6,7 +6,7 @@
 # "Quiénes somos" (Términos) y "Responsable" (Privacidad).
 # CONFIRMAR con el dueño: la regla de cancelación (sección 6) y la de entregas fallidas (sección 4).
 
-VERSION = "2026-10-25.2"
+VERSION = "2026-10-25.3"
 WA = '<a href="https://wa.me/584223332505">+58 422-333-2505</a>'
 MAIL = '<a href="mailto:Loopicaracas@gmail.com">Loopicaracas@gmail.com</a>'
 IG = '<a href="https://www.instagram.com/loopi.ccs" rel="noopener">@loopi.ccs</a>'
@@ -46,7 +46,7 @@ T = [
     ]]),
     ("3. Precios y pagos", [[
         "Los precios publicados están en dólares estadounidenses y son referenciales. El precio es el mismo cualquiera sea la moneda de pago: si pagas en bolívares, se calcula a la tasa oficial del Banco Central de Venezuela del día del pago.",
-        "Aceptamos los medios de pago indicados en el sitio (pago móvil, Zelle, efectivo y Binance). Los pagos en divisas pueden estar sujetos al Impuesto a las Grandes Transacciones Financieras (IGTF) cuando la ley lo exija.",
+        "Aceptamos los medios de pago indicados en el sitio (pago móvil, Zelle, efectivo y Binance).",
         "El total de tu pedido es el que te confirmamos por WhatsApp, con el costo de delivery incluido cuando corresponda.",
     ]]),
     ("4. Entregas", [[
@@ -84,10 +84,13 @@ T = [
     ("13. Uso del sitio", [
         "No está permitido usar el sitio o nuestros canales de contacto con fines ilícitos o fraudulentos, enviar mensajes masivos no solicitados, intentar acceder sin autorización a sus sistemas ni copiar su contenido de forma automatizada.",
     ]),
-    ("14. Ley aplicable y reclamos", [
+    ("14. Acuerdo completo", [
+        "Estos términos, junto con la confirmación de tu pedido o la propuesta de tu evento, forman todo lo acordado entre las partes. No valen promesas ni acuerdos de palabra que no consten por escrito (correo o WhatsApp).",
+    ]),
+    ("15. Ley aplicable y reclamos", [
         "Estos términos se rigen por las leyes de la República Bolivariana de Venezuela. Si tienes un reclamo, escríbenos por WhatsApp o correo y te responderemos en un plazo máximo de 10 días hábiles. También puedes acudir a la Superintendencia Nacional para la Defensa de los Derechos Socioeconómicos (SUNDDE) o a los tribunales competentes. Para cualquier controversia, las partes eligen como domicilio especial la ciudad de Caracas, a cuyos tribunales se someten, sin perjuicio del fuero que la ley reconozca al consumidor.",
     ]),
-    ("15. Cambios", [
+    ("16. Cambios", [
         "Podemos actualizar estos términos. La versión vigente es la publicada en esta página con su fecha; cada pedido se rige por la versión vigente cuando fue confirmado.",
     ]),
 ]
