@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://loopivzla.com/</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/carbonara-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/carbonara-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/funghi-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/funghi-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/morcilla-carupanera-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/morcilla-carupanera-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/nutella-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/nutella-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/pollo-curry-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/pollo-curry-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/salted-caramel-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/salted-caramel-24.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/vegetales-12.jpg</image:loc></image:image>
+    <image:image><image:loc>https://loopivzla.com/img/productos-google/vegetales-24.jpg</image:loc></image:image>
   </url>
   <url>
     <loc>https://loopivzla.com/eventos.html</loc>
