@@ -720,6 +720,7 @@ body.no-scroll {
   transition: transform var(--transition-med), box-shadow var(--transition-med);
   display: flex;
   flex-direction: column;
+  color: var(--negro);
 }
 .card:hover { transform: scale(1.03); box-shadow: var(--shadow-rojo); }
 /* Renders reales del empaque (PNG con fondo transparente, 1:1) — contain
@@ -760,7 +761,7 @@ body.no-scroll {
 @media (min-width: 720px) {
   .card__premium { top: 0.85rem; left: 0.85rem; font-size: 0.7rem; }
 }
-.card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
 .card__title-row {
   display: flex;
   align-items: center;
@@ -794,7 +795,10 @@ body.no-scroll {
 .card__tamano-selector {
   display: flex;
   gap: 0.35rem;
-  margin-top: 0.35rem;
+  /* auto: tamaños y stepper siempre abajo, alineados entre tarjetas
+     aunque un título ocupe 2 líneas. */
+  margin-top: auto;
+  padding-top: 0.35rem;
 }
 .card__tamano-btn {
   flex: 1;
