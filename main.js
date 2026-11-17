@@ -28,8 +28,13 @@ const CONFIG = {
   },
 };
 
-// Precio por bolsita según tamaño — igual para todos los sabores.
+// Precio por bolsita según tamaño. Los sabores marcados premium (Funghi y
+// Nutella) tienen su propia tabla de precios y llevan la etiqueta PREMIUM.
 const PRECIOS = { 12: 10, 24: 20 };
+const PRECIOS_PREMIUM = { 12: 16, 24: 30 };
+function precioDe(item, tamano) {
+  return (item.premium ? PRECIOS_PREMIUM : PRECIOS)[tamano];
+}
 const TAMANOS = [12, 24];
 
 function claveItem(id, tamano) {
@@ -100,6 +105,7 @@ const MENU = [
   },
   {
     id: 'funghi',
+    premium: true,
     nombre: 'Funghi',
     categoria: 'salado',
     descripcion: 'Diferentes tipos de hongos salteados.',
@@ -124,6 +130,7 @@ const MENU = [
   },
   {
     id: 'nutella',
+    premium: true,
     nombre: 'Nutella',
     categoria: 'postre',
     descripcion: 'Nutella es nutella.',
@@ -290,6 +297,7 @@ function renderTarjetaMenu(item) {
   const cantidadInicial = statePedido.cantidades[claveInicial] || 0;
   return `
     <article class="card">
+      ${item.premium ? '<span class="card__premium">Premium</span>' : ''}
       <img class="card__img" data-item-img="${item.id}" src="${imgTamano(item, tamanoInicial)}" alt="Mini lumpias sabor ${item.nombre}: ${item.descripcion}" loading="lazy" decoding="async">
       <div class="card__body">
         <div class="card__title-row">
@@ -302,7 +310,7 @@ function renderTarjetaMenu(item) {
             (t) => `
             <button type="button" class="card__tamano-btn${t === tamanoInicial ? ' is-active' : ''}" data-tamano-btn="${t}" data-item="${item.id}">
               <span class="card__tamano-btn-num">${t}</span>
-              <span class="card__tamano-btn-precio">$${PRECIOS[t]}</span>
+              <span class="card__tamano-btn-precio">$${precioDe(item, t)}</span>
             </button>`
           ).join('')}
         </div>
@@ -419,7 +427,7 @@ function itemsDelPedido() {
       const clave = claveItem(item.id, tamano);
       const cantidad = statePedido.cantidades[clave];
       if (cantidad > 0) {
-        items.push({ id: item.id, clave, nombre: item.nombre, categoria: item.categoria, tamano, cantidad, precioUnit: PRECIOS[tamano] });
+        items.push({ id: item.id, clave, nombre: item.nombre, categoria: item.categoria, tamano, cantidad, precioUnit: precioDe(item, tamano) });
       }
     });
   });

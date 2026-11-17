@@ -726,6 +726,26 @@ body.no-scroll {
    sobre fondo blanco en vez de cover, para que se vea la bolsita entera
    sin recortarla y que la foto tenga protagonismo real. */
 .card__img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
+/* Etiqueta PREMIUM (Funghi y Nutella) — pequeña, sobre la esquina de la foto. */
+.card__premium {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  z-index: 1;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--crema);
+  background: var(--morado);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+@media (min-width: 720px) {
+  .card__premium { top: 0.85rem; left: 0.85rem; font-size: 0.7rem; }
+}
 .card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; }
 .card__title-row {
   display: flex;
