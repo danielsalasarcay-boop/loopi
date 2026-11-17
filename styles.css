@@ -737,11 +737,25 @@ body.no-scroll {
   text-transform: uppercase;
   font-size: 0.6rem;
   letter-spacing: 0.04em;
-  color: var(--crema);
-  background: var(--morado);
+  color: #4a3200;
+  background: linear-gradient(135deg, #8a6212 0%, #f6d77a 28%, #fff3c4 45%, #d4a537 62%, #f3cf6a 80%, #9c7016 100%);
+  background-size: 220% 100%;
+  border: 1px solid rgba(138, 98, 18, 0.55);
+  text-shadow: 0 1px 0 rgba(255, 245, 205, 0.6);
+  box-shadow: 0 2px 6px rgba(156, 112, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   padding: 0.2rem 0.5rem;
   border-radius: var(--radius-pill);
   pointer-events: none;
+  overflow: hidden;
+  animation: premium-brillo 3.5s ease-in-out infinite;
+}
+/* Destello dorado que cruza la etiqueta de vez en cuando. */
+@keyframes premium-brillo {
+  0%, 55% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card__premium { animation: none; background-position: 50% 0; }
 }
 @media (min-width: 720px) {
   .card__premium { top: 0.85rem; left: 0.85rem; font-size: 0.7rem; }
