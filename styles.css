@@ -761,10 +761,14 @@ body.no-scroll {
 @media (min-width: 720px) {
   .card__premium { top: 0.85rem; left: 0.85rem; font-size: 0.7rem; }
 }
-/* Teléfono: etiqueta más compacta y pegada arriba, en el espacio libre
-   sobre la bolsita, para no montarse encima (bolsita y ficha no cambian). */
+/* Teléfono: todas las bolsitas bajan un poco (mismo tamaño) hacia el
+   espacio vacío que quedaba entre la foto y el nombre; así la etiqueta
+   PREMIUM tiene aire arriba sin montarse sobre la bolsita ni pegarse al
+   borde. El cuerpo se pinta encima por si la foto lo roza. */
 @media (max-width: 719px) {
-  .card__premium { top: 3px; left: 14px; font-size: 0.55rem; line-height: 1.1; padding: 0.08rem 0.45rem; }
+  .card__img { transform: translateY(11%); }
+  .card__body { position: relative; }
+  .card__premium { top: 9px; left: 12px; }
 }
 .card__body { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
 .card__title-row {
